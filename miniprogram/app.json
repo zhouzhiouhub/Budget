@@ -4,6 +4,7 @@
     "pages/expense/index",
     "pages/records/index",
     "pages/analysis/index",
+    "pages/profile/index",
     "pages/example/index"
   ],
   "window": {

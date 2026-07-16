@@ -1,0 +1,110 @@
+<view class="page-shell">
+  <view class="profile-header">
+    <view class="avatar-mark">我</view>
+    <view class="profile-copy">
+      <view class="eyebrow">BudgetFlow</view>
+      <view class="page-title">我的</view>
+      <view class="profile-desc">个人预算与偏好设置</view>
+    </view>
+  </view>
+
+  <view class="state-panel" wx:if="{{status === 'loading'}}">
+    <view class="state-title">加载中</view>
+    <view class="state-text">正在读取个人预算信息</view>
+  </view>
+
+  <view class="state-panel error" wx:elif="{{status === 'error'}}">
+    <view class="state-title">加载失败</view>
+    <view class="state-text">{{errorMessage}}</view>
+    <button class="retry-button" bindtap="refreshProfile">重试</button>
+  </view>
+
+  <block wx:else>
+    <view class="budget-card {{summary.statusClass}}">
+      <view class="card-head">
+        <view>
+          <view class="card-label">{{summary.period_label}}</view>
+          <view class="card-title">本月预算</view>
+        </view>
+        <view class="status-badge">{{summary.has_budget ? summary.statusText : '未设置'}}</view>
+      </view>
+
+      <view class="budget-main">
+        <view>
+          <view class="amount-label">{{summary.remainingTitle}}</view>
+          <view class="amount-value">{{summary.remainingDisplay}}</view>
+        </view>
+      </view>
+
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{summary.progressPercent}}%;"></view>
+      </view>
+
+      <view class="budget-metrics">
+        <view class="metric-item">
+          <view class="metric-label">总预算</view>
+          <view class="metric-value">{{summary.totalDisplay}}</view>
+        </view>
+        <view class="metric-item">
+          <view class="metric-label">已使用</view>
+          <view class="metric-value">{{summary.usedDisplay}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-card">
+      <view class="section-title">预算设置</view>
+      <view class="section-desc">设置本月总预算，后续消费会从这里扣减。</view>
+      <view class="budget-input-row">
+        <text class="currency">¥</text>
+        <input
+          class="budget-input"
+          type="digit"
+          value="{{budgetAmountInput}}"
+          placeholder="请输入总预算"
+          bindinput="onBudgetAmountInput"
+        />
+      </view>
+      <view class="editor-error" wx:if="{{budgetEditorError}}">{{budgetEditorError}}</view>
+      <button
+        class="save-button"
+        loading="{{budgetEditorStatus === 'saving'}}"
+        disabled="{{budgetEditorStatus === 'saving'}}"
+        bindtap="onSaveBudgetAmount"
+      >保存预算</button>
+    </view>
+
+    <view class="section-title action-title">常用功能</view>
+    <view class="action-list">
+      <button class="action-item" bindtap="onViewRecords">
+        <view>
+          <view class="action-name">消费</view>
+          <view class="action-desc">查看消费记录与合计</view>
+        </view>
+        <view class="action-arrow">›</view>
+      </button>
+      <button class="action-item" bindtap="onViewAnalytics">
+        <view>
+          <view class="action-name">分析</view>
+          <view class="action-desc">查看分类排行和趋势</view>
+        </view>
+        <view class="action-arrow">›</view>
+      </button>
+    </view>
+
+    <view class="info-card">
+      <view class="info-row">
+        <text>预算范围</text>
+        <text class="info-value">{{summary.scope_label}}</text>
+      </view>
+      <view class="info-row">
+        <text>金额单位</text>
+        <text class="info-value">元</text>
+      </view>
+      <view class="info-row">
+        <text>数据存储</text>
+        <text class="info-value">本机小程序缓存</text>
+      </view>
+    </view>
+  </block>
+</view>

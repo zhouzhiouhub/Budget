@@ -9,26 +9,23 @@ Page({
   data: {
     status: "loading",
     summary: createEmptyDashboardState().summary,
-    transactions: [],
     errorMessage: "",
-    showBudgetEditor: false,
     budgetAmountInput: "",
     budgetEditorError: "",
     budgetEditorStatus: "idle",
-    showSideMenu: false,
   },
 
   onShow() {
-    this.refreshDashboard();
+    this.refreshProfile();
   },
 
   onPullDownRefresh() {
-    this.refreshDashboard().finally(() => {
+    this.refreshProfile().finally(() => {
       wx.stopPullDownRefresh();
     });
   },
 
-  refreshDashboard() {
+  refreshProfile() {
     this.setData({
       status: "loading",
       errorMessage: "",
@@ -37,40 +34,25 @@ Page({
     return loadDashboard()
       .then((dashboard) => {
         this.setData({
-          status: dashboard.summary.has_budget ? "success" : "empty",
+          status: "success",
           summary: dashboard.summary,
-          transactions: dashboard.transactions,
+          budgetAmountInput: dashboard.summary.has_budget ? dashboard.summary.total_amount_yuan : "",
+          budgetEditorError: "",
+          budgetEditorStatus: "idle",
         });
       })
       .catch((error) => {
         this.setData({
           status: "error",
-          errorMessage: error.message || "预算数据加载失败",
+          errorMessage: error.message || "我的页面加载失败",
         });
       });
-  },
-
-  onCreateBudget() {
-    this.setData({
-      showBudgetEditor: true,
-      budgetAmountInput: this.data.summary.has_budget ? this.data.summary.total_amount_yuan : "",
-      budgetEditorError: "",
-      budgetEditorStatus: "idle",
-    });
   },
 
   onBudgetAmountInput(event) {
     this.setData({
       budgetAmountInput: event.detail.value,
       budgetEditorError: "",
-    });
-  },
-
-  onCancelBudgetEdit() {
-    this.setData({
-      showBudgetEditor: false,
-      budgetEditorError: "",
-      budgetEditorStatus: "idle",
     });
   },
 
@@ -95,14 +77,13 @@ Page({
         this.setData({
           status: "success",
           summary: dashboard.summary,
-          transactions: dashboard.transactions,
-          showBudgetEditor: false,
-          budgetAmountInput: "",
+          budgetAmountInput: dashboard.summary.total_amount_yuan,
           budgetEditorStatus: "idle",
+          budgetEditorError: "",
         });
 
         wx.showToast({
-          title: "已更新总预算",
+          title: "预算已更新",
           icon: "success",
         });
       })
@@ -114,59 +95,15 @@ Page({
       });
   },
 
-  onOpenSideMenu() {
-    this.setData({
-      showSideMenu: true,
-    });
-  },
-
-  onCloseSideMenu() {
-    this.setData({
-      showSideMenu: false,
-    });
-  },
-
   onViewRecords() {
-    this.setData({
-      showSideMenu: false,
-    });
     wx.navigateTo({
       url: "/pages/records/index",
     });
   },
 
-  onAddExpense() {
-    this.setData({
-      showSideMenu: false,
-    });
-    wx.navigateTo({
-      url: "/pages/expense/index",
-    });
-  },
-
   onViewAnalytics() {
-    this.setData({
-      showSideMenu: false,
-    });
     wx.navigateTo({
       url: "/pages/analysis/index",
-    });
-  },
-
-  onViewProfile() {
-    this.setData({
-      showSideMenu: false,
-    });
-    wx.navigateTo({
-      url: "/pages/profile/index",
-    });
-  },
-
-  onTodoMenuItem(event) {
-    const title = event.currentTarget.dataset.title || "该功能";
-    wx.showToast({
-      title: `${title}开发中`,
-      icon: "none",
     });
   },
 });
