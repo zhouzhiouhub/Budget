@@ -1,7 +1,7 @@
 <view class="page-shell">
   <view class="page-header">
     <view class="eyebrow">{{period}}</view>
-    <view class="page-title">消费记录</view>
+    <view class="page-title">消费</view>
   </view>
 
   <view class="filter-panel">
