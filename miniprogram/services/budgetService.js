@@ -7,15 +7,71 @@ const {
   subtractAmountYuan,
 } = require("../utils/money");
 
+const STORAGE_KEY = "budget_flow_state_v1";
+let memoryBudgetState = null;
+
 function getCurrentPeriod(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${year}-${month}`;
 }
 
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function getPeriodLabel(period) {
   const parts = period.split("-");
   return `${parts[0]}年${Number(parts[1])}月`;
+}
+
+function createId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function hasWxStorage() {
+  return typeof wx !== "undefined" && wx.getStorageSync && wx.setStorageSync;
+}
+
+function createInitialBudgetState() {
+  return {
+    budgets: {},
+    transactions: [],
+    mutations: [],
+  };
+}
+
+function normalizeBudgetState(rawState) {
+  const state = rawState && typeof rawState === "object" ? rawState : createInitialBudgetState();
+  return {
+    budgets: state.budgets && typeof state.budgets === "object" ? state.budgets : {},
+    transactions: Array.isArray(state.transactions) ? state.transactions : [],
+    mutations: Array.isArray(state.mutations) ? state.mutations : [],
+  };
+}
+
+function readBudgetState() {
+  if (hasWxStorage()) {
+    return normalizeBudgetState(wx.getStorageSync(STORAGE_KEY));
+  }
+
+  if (!memoryBudgetState) {
+    memoryBudgetState = createInitialBudgetState();
+  }
+  return normalizeBudgetState(memoryBudgetState);
+}
+
+function writeBudgetState(state) {
+  const normalizedState = normalizeBudgetState(state);
+  if (hasWxStorage()) {
+    wx.setStorageSync(STORAGE_KEY, normalizedState);
+  } else {
+    memoryBudgetState = normalizedState;
+  }
+  return normalizedState;
 }
 
 function getStatusClass(status) {
@@ -45,11 +101,13 @@ function normalizeTransaction(transaction) {
 
   return {
     id: transaction.id,
+    period: transaction.period,
     type: transaction.type,
     title: transaction.title,
     expense_type_id: transaction.expense_type_id || "",
     expense_type_name: expenseTypeName,
     amount_yuan: amountYuan,
+    remark: transaction.remark || "",
     amountLabel: transaction.type === "expense" ? `-${amountYuan} 元` : `${amountYuan} 元`,
     occurred_at: transaction.occurred_at,
     metaText: `${expenseTypeName} · ${transaction.occurred_at}`,
@@ -150,81 +208,117 @@ function buildDashboardState(snapshot = {}) {
   };
 }
 
-function createDemoBudgetSnapshot(period = getCurrentPeriod()) {
+function getPeriodTransactions(state, period) {
+  return state.transactions.filter((item) => item.period === period);
+}
+
+function getBudgetSnapshot(state, period = getCurrentPeriod()) {
+  const budget = state.budgets[period];
   return {
-    id: `budget-${period}`,
-    scope: "personal",
     period,
-    total_amount_yuan: "3800.00",
-    used_amount_yuan: "2901.60",
-    transactions: [
-      {
-        id: "txn-001",
-        type: "expense",
-        title: "午餐",
-        expense_type_id: "food",
-        expense_type_name: "餐饮",
-        amount_yuan: "42.00",
-        occurred_at: `${period}-16`,
-      },
-      {
-        id: "txn-002",
-        type: "expense",
-        title: "地铁通勤",
-        expense_type_id: "transport",
-        expense_type_name: "交通",
-        amount_yuan: "8.00",
-        occurred_at: `${period}-15`,
-      },
-      {
-        id: "txn-003",
-        type: "expense",
-        title: "资料订阅",
-        expense_type_id: "office",
-        expense_type_name: "办公",
-        amount_yuan: "68.00",
-        occurred_at: `${period}-14`,
-      },
-      {
-        id: "txn-004",
-        type: "expense",
-        title: "咖啡",
-        expense_type_id: "food",
-        expense_type_name: "餐饮",
-        amount_yuan: "28.00",
-        occurred_at: `${period}-13`,
-      },
-      {
-        id: "txn-005",
-        type: "expense",
-        title: "打车",
-        expense_type_id: "transport",
-        expense_type_name: "交通",
-        amount_yuan: "35.00",
-        occurred_at: `${period}-12`,
-      },
-      {
-        id: "txn-006",
-        type: "expense",
-        title: "电影票",
-        expense_type_id: "entertainment",
-        expense_type_name: "娱乐",
-        amount_yuan: "66.00",
-        occurred_at: `${period}-11`,
-      },
-    ],
+    scope: "personal",
+    total_amount_yuan: budget ? budget.total_amount_yuan : "",
+    transactions: getPeriodTransactions(state, period),
   };
 }
 
-function loadDashboard() {
-  return Promise.resolve(buildDashboardState(createDemoBudgetSnapshot()));
+function calculateOverBudgetAmount(remainingAmountYuan, expenseAmountYuan) {
+  if (compareAmountYuan(remainingAmountYuan, "0.00") < 0) {
+    return addAmountYuan(expenseAmountYuan, absoluteAmountYuan(remainingAmountYuan));
+  }
+
+  if (compareAmountYuan(remainingAmountYuan, expenseAmountYuan) < 0) {
+    return subtractAmountYuan(expenseAmountYuan, remainingAmountYuan);
+  }
+
+  return "0.00";
+}
+
+function loadDashboard(period = getCurrentPeriod()) {
+  const state = readBudgetState();
+  return Promise.resolve(buildDashboardState(getBudgetSnapshot(state, period)));
+}
+
+function saveBudgetAmount(amountYuan, period = getCurrentPeriod()) {
+  const budgetAmount = normalizeBudgetAmountUpdate(amountYuan);
+  const state = readBudgetState();
+  const existingBudget = state.budgets[period] || {};
+  const now = new Date().toISOString();
+
+  state.budgets[period] = {
+    id: existingBudget.id || createId("budget"),
+    scope: "personal",
+    period,
+    total_amount_yuan: budgetAmount.total_amount_yuan,
+    created_at: existingBudget.created_at || now,
+    updated_at: now,
+  };
+
+  const nextState = writeBudgetState(state);
+  return Promise.resolve(buildDashboardState(getBudgetSnapshot(nextState, period)));
+}
+
+function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
+  const state = readBudgetState();
+  const budget = state.budgets[period];
+
+  if (!budget || !budget.total_amount_yuan) {
+    throw new Error("请先设置本月总预算");
+  }
+
+  const amountYuan = normalizeAmountYuan(expenseDraft.amount_yuan);
+  const dashboardBefore = buildDashboardState(getBudgetSnapshot(state, period));
+  const overBudgetAmountYuan = calculateOverBudgetAmount(dashboardBefore.summary.remaining_amount_yuan, amountYuan);
+
+  if (compareAmountYuan(overBudgetAmountYuan, "0.00") > 0) {
+    throw new Error(`本次消费将超出预算 ${overBudgetAmountYuan} 元，请先调整总预算`);
+  }
+
+  const now = new Date().toISOString();
+  const record = {
+    id: createId("expense"),
+    period,
+    type: "expense",
+    title: expenseDraft.remark || expenseDraft.expense_type_name || "消费",
+    expense_type_id: expenseDraft.expense_type_id,
+    expense_type_name: expenseDraft.expense_type_name,
+    amount_yuan: amountYuan,
+    remark: expenseDraft.remark || "",
+    occurred_at: expenseDraft.occurred_at || getLocalDateString(),
+    created_at: now,
+    updated_at: now,
+  };
+  const afterUsedAmountYuan = addAmountYuan(dashboardBefore.summary.used_amount_yuan, amountYuan);
+
+  state.transactions.push(record);
+  state.mutations.push({
+    id: createId("mutation"),
+    budget_period_id: budget.id,
+    expense_record_id: record.id,
+    mutation_type: "expense",
+    amount_yuan: amountYuan,
+    before_used_amount_yuan: dashboardBefore.summary.used_amount_yuan,
+    after_used_amount_yuan: afterUsedAmountYuan,
+    over_budget_amount_yuan: "0.00",
+    created_at: now,
+  });
+
+  const nextState = writeBudgetState(state);
+
+  return Promise.resolve({
+    success: true,
+    data: record,
+    dashboard: buildDashboardState(getBudgetSnapshot(nextState, period)),
+  });
 }
 
 module.exports = {
   buildDashboardState,
-  createDemoBudgetSnapshot,
   createEmptyDashboardState,
   getCurrentPeriod,
   loadDashboard,
   normalizeBudgetAmountUpdate,
+  readBudgetState,
+  saveBudgetAmount,
+  saveExpenseRecord,
 };

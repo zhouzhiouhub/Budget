@@ -1,8 +1,8 @@
 const {
-  buildDashboardState,
   createEmptyDashboardState,
   loadDashboard,
   normalizeBudgetAmountUpdate,
+  saveBudgetAmount,
 } = require("../../services/budgetService");
 
 Page({
@@ -17,7 +17,7 @@ Page({
     budgetEditorStatus: "idle",
   },
 
-  onLoad() {
+  onShow() {
     this.refreshDashboard();
   },
 
@@ -80,34 +80,37 @@ Page({
     });
 
     try {
-      const budgetAmount = normalizeBudgetAmountUpdate(this.data.budgetAmountInput);
-      const dashboard = buildDashboardState({
-        period: this.data.summary.period,
-        scope: this.data.summary.scope,
-        total_amount_yuan: budgetAmount.total_amount_yuan,
-        used_amount_yuan: this.data.summary.used_amount_yuan,
-        transactions: this.data.transactions,
-      });
-
-      this.setData({
-        status: "success",
-        summary: dashboard.summary,
-        transactions: dashboard.transactions,
-        showBudgetEditor: false,
-        budgetAmountInput: "",
-        budgetEditorStatus: "idle",
-      });
-
-      wx.showToast({
-        title: "已更新总预算",
-        icon: "success",
-      });
+      normalizeBudgetAmountUpdate(this.data.budgetAmountInput);
     } catch (error) {
       this.setData({
         budgetEditorStatus: "error",
         budgetEditorError: error.message || "请输入有效金额",
       });
+      return;
     }
+
+    saveBudgetAmount(this.data.budgetAmountInput, this.data.summary.period)
+      .then((dashboard) => {
+        this.setData({
+          status: "success",
+          summary: dashboard.summary,
+          transactions: dashboard.transactions,
+          showBudgetEditor: false,
+          budgetAmountInput: "",
+          budgetEditorStatus: "idle",
+        });
+
+        wx.showToast({
+          title: "已更新总预算",
+          icon: "success",
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          budgetEditorStatus: "error",
+          budgetEditorError: error.message || "预算保存失败",
+        });
+      });
   },
 
   onAddExpense() {

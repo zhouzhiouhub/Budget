@@ -3,6 +3,7 @@ const {
   createExpenseRecordDraft,
   selectExpenseType,
 } = require("../../services/expenseFormService");
+const { saveExpenseRecord } = require("../../services/budgetService");
 
 function returnToHome() {
   const pages = getCurrentPages();
@@ -62,6 +63,7 @@ Page({
     });
 
     createExpenseRecordDraft(this.data, this.data.expenseTypes)
+      .then((result) => saveExpenseRecord(result.data))
       .then(() => {
         this.setData({
           status: "success",
@@ -77,7 +79,7 @@ Page({
       .catch((error) => {
         this.setData({
           status: "error",
-          errorMessage: error.message || "消费记录校验失败",
+          errorMessage: error.message || "消费记录保存失败",
         });
       });
   },
