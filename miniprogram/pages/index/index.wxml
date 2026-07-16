@@ -29,8 +29,8 @@
 
   <block wx:elif="{{status === 'empty'}}">
     <view class="state-panel">
-      <view class="state-title">暂无预算</view>
-      <view class="state-text">本月还没有设置总预算，可在我的页面完成设置。</view>
+      <view class="state-title">{{summary.period_edit_policy.is_future_period ? "月份未到" : "暂无预算"}}</view>
+      <view class="state-text">{{summary.period_edit_policy.is_future_period ? "当前还没有记录" : "本月还没有设置总预算，可在我的页面完成设置。"}}</view>
     </view>
   </block>
 

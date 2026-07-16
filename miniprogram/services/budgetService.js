@@ -49,18 +49,23 @@ function getPeriodEditPolicy(period = getCurrentPeriod(), date = new Date()) {
   const previousPeriod = getPreviousPeriod(date);
   const isCurrentPeriod = normalizedPeriod === currentPeriod;
   const isPreviousGracePeriod = normalizedPeriod === previousPeriod && date.getDate() <= 2;
+  const isFuturePeriod = normalizedPeriod > currentPeriod;
   const canEditRecords = isCurrentPeriod || isPreviousGracePeriod;
   const periodLabel = getPeriodLabel(normalizedPeriod);
+  const readonlyText = isFuturePeriod
+    ? `${periodLabel}还未到，当前还没有记录`
+    : `${periodLabel}仅可查看，当前只能编辑本月记录；每月前两天可编辑上月记录`;
 
   return {
     period: normalizedPeriod,
     period_label: periodLabel,
     is_current_period: isCurrentPeriod,
     is_previous_grace_period: isPreviousGracePeriod,
+    is_future_period: isFuturePeriod,
     can_edit_records: canEditRecords,
     can_edit_budget: canEditRecords,
     is_readonly: !canEditRecords,
-    readonly_text: canEditRecords ? "" : `${periodLabel}仅可查看，当前只能编辑本月记录；每月前两天可编辑上月记录`,
+    readonly_text: canEditRecords ? "" : readonlyText,
   };
 }
 

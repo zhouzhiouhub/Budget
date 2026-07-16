@@ -16,8 +16,8 @@
   </view>
 
   <view class="state-panel" wx:elif="{{status === 'empty'}}">
-    <view class="state-title">暂无分析数据</view>
-    <view class="state-text">设置预算并记录消费后，这里会展示分类排行、趋势和预算建议。</view>
+    <view class="state-title">{{periodEditPolicy.is_future_period ? "月份未到" : "暂无分析数据"}}</view>
+    <view class="state-text">{{periodEditPolicy.is_future_period ? "当前还没有记录" : "设置预算并记录消费后，这里会展示分类排行、趋势和预算建议。"}}</view>
   </view>
 
   <block wx:else>

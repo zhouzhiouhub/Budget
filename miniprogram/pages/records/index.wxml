@@ -4,7 +4,7 @@
     <view class="page-title">消费</view>
   </view>
 
-  <view class="readonly-note" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
+  <view class="readonly-note" wx:if="{{periodEditPolicy.is_readonly && !periodEditPolicy.is_future_period}}">{{periodEditPolicy.readonly_text}}</view>
 
   <view class="filter-panel">
     <view class="filter-row">
@@ -30,8 +30,8 @@
   </view>
 
   <view class="state-panel" wx:elif="{{status === 'empty'}}">
-    <view class="state-title">暂无记录</view>
-    <view class="state-text">当前类型还没有消费</view>
+    <view class="state-title">{{periodEditPolicy.is_future_period ? "月份未到" : "暂无记录"}}</view>
+    <view class="state-text">{{periodEditPolicy.is_future_period ? "当前还没有记录" : "当前类型还没有消费"}}</view>
   </view>
 
   <view class="record-list" wx:else>
