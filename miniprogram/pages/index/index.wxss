@@ -181,12 +181,16 @@ page {
 
 .primary-button,
 .secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
   height: 88rpx;
   border-radius: 14rpx;
   padding: 0 28rpx;
   font-size: 28rpx;
   font-weight: 600;
+  line-height: 1;
 }
 
 .primary-button {
@@ -320,11 +324,15 @@ page {
 }
 
 .modal-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: 1;
   height: 86rpx;
   border-radius: 14rpx;
   font-size: 28rpx;
   font-weight: 700;
+  line-height: 1;
 }
 
 .modal-button.ghost {

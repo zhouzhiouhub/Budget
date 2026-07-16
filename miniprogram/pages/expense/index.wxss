@@ -145,6 +145,9 @@ page {
 }
 
 .submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 92rpx;
   margin-top: 36rpx;
   border-radius: 16rpx;
@@ -152,6 +155,7 @@ page {
   color: #ffffff;
   font-size: 30rpx;
   font-weight: 700;
+  line-height: 1;
 }
 
 .submit-button[disabled] {
