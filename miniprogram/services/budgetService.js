@@ -111,8 +111,24 @@ function normalizeTransaction(transaction) {
     remark: transaction.remark || "",
     amountLabel: transaction.type === "expense" ? `-${amountYuan} 元` : `${amountYuan} 元`,
     occurred_at: transaction.occurred_at,
+    created_at: transaction.created_at || "",
+    updated_at: transaction.updated_at || "",
     metaText: `${expenseTypeName} · ${transaction.occurred_at}`,
   };
+}
+
+function compareTransactionByRecent(left, right) {
+  const occurredCompare = String(right.occurred_at || "").localeCompare(String(left.occurred_at || ""));
+  if (occurredCompare !== 0) {
+    return occurredCompare;
+  }
+
+  const createdCompare = String(right.created_at || "").localeCompare(String(left.created_at || ""));
+  if (createdCompare !== 0) {
+    return createdCompare;
+  }
+
+  return String(right.id || "").localeCompare(String(left.id || ""));
 }
 
 function sumExpenseAmountYuan(transactions) {
@@ -127,7 +143,7 @@ function getRecentExpenseTransactions(transactions, limit = 5) {
   return transactions
     .filter((item) => item.type === "expense")
     .slice()
-    .sort((left, right) => String(right.occurred_at).localeCompare(String(left.occurred_at)))
+    .sort(compareTransactionByRecent)
     .slice(0, limit);
 }
 
@@ -241,7 +257,7 @@ function getExpenseRecords(period = getCurrentPeriod(), expenseTypeId = "all") {
     .map(normalizeTransaction)
     .filter((item) => item.type === "expense")
     .filter((item) => expenseTypeId === "all" || item.expense_type_id === expenseTypeId)
-    .sort((left, right) => String(right.occurred_at).localeCompare(String(left.occurred_at)));
+    .sort(compareTransactionByRecent);
 
   return Promise.resolve(records);
 }
@@ -434,7 +450,7 @@ function buildAnalyticsState(snapshot = {}) {
   const records = (snapshot.transactions || [])
     .map(normalizeTransaction)
     .filter((item) => item.type === "expense")
-    .sort((left, right) => String(right.occurred_at).localeCompare(String(left.occurred_at)));
+    .sort(compareTransactionByRecent);
   const hasRecords = records.length > 0;
   const categoryRanking = buildCategoryRanking(records);
   const dailyTrend = buildDailyTrend(records, period);
