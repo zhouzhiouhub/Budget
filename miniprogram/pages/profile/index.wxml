@@ -36,15 +36,24 @@
     <view class="form-card">
       <view class="section-title">预算设置</view>
       <view class="section-desc">设置本月总预算，后续消费会从这里扣减。</view>
-      <view class="budget-input-row">
-        <text class="currency">¥</text>
-        <input
-          class="budget-input"
-          type="digit"
-          value="{{budgetAmountInput}}"
-          placeholder="请输入总预算"
-          bindinput="onBudgetAmountInput"
-        />
+      <view class="budget-setting-row">
+        <view class="budget-month-segment">
+          <view class="segment-label">月份</view>
+          <view class="segment-value">{{summary.period_label}}</view>
+        </view>
+        <view class="budget-amount-segment">
+          <view class="segment-label">预算金额</view>
+          <view class="budget-amount-input-row">
+            <text class="currency">¥</text>
+            <input
+              class="budget-input"
+              type="digit"
+              value="{{budgetAmountInput}}"
+              placeholder="0.00"
+              bindinput="onBudgetAmountInput"
+            />
+          </view>
+        </view>
       </view>
       <view class="editor-error" wx:if="{{budgetEditorError}}">{{budgetEditorError}}</view>
       <button

@@ -211,15 +211,55 @@ page {
   margin-top: 8rpx;
 }
 
-.budget-input-row {
+.budget-setting-row {
   display: flex;
-  align-items: center;
-  min-height: 96rpx;
+  align-items: stretch;
+  gap: 16rpx;
   margin-top: 24rpx;
-  padding: 0 22rpx;
+}
+
+.budget-month-segment,
+.budget-amount-segment {
+  min-height: 112rpx;
+  box-sizing: border-box;
   border: 1rpx solid #c9d7ce;
   border-radius: 14rpx;
+  padding: 16rpx 18rpx;
   background: #f8faf7;
+}
+
+.budget-month-segment {
+  flex: 0 0 190rpx;
+  width: 190rpx;
+}
+
+.budget-amount-segment {
+  flex: 1;
+  min-width: 0;
+}
+
+.segment-label {
+  color: #617064;
+  font-size: 22rpx;
+  line-height: 30rpx;
+}
+
+.segment-value {
+  margin-top: 12rpx;
+  color: #17221b;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 40rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.budget-amount-input-row {
+  display: flex;
+  align-items: center;
+  min-height: 48rpx;
+  margin-top: 6rpx;
 }
 
 .currency {
