@@ -136,8 +136,19 @@ Page({
   },
 
   onAddExpense() {
+    this.setData({
+      showSideMenu: false,
+    });
     wx.navigateTo({
       url: "/pages/expense/index",
+    });
+  },
+
+  onTodoMenuItem(event) {
+    const title = event.currentTarget.dataset.title || "该功能";
+    wx.showToast({
+      title: `${title}开发中`,
+      icon: "none",
     });
   },
 });
