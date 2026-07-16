@@ -25,14 +25,14 @@ page {
   line-height: 56rpx;
 }
 
-.filter-scroll {
+.filter-panel {
   width: 100%;
-  white-space: nowrap;
   margin-bottom: 28rpx;
 }
 
 .filter-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 16rpx;
 }
 
@@ -41,10 +41,12 @@ page {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  min-width: 0;
   height: 68rpx;
   border: 1rpx solid #c9d7ce;
   border-radius: 999rpx;
   padding: 0 28rpx;
+  margin: 0;
   background: #ffffff;
   color: #24624d;
   font-size: 26rpx;

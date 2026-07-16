@@ -99,7 +99,6 @@
       <button class="side-menu-item active" bindtap="onCloseSideMenu">首页</button>
       <button class="side-menu-item" bindtap="onViewRecords">消费</button>
       <button class="side-menu-item" bindtap="onAddExpense">记账</button>
-      <button class="side-menu-item pending" data-title="预算" bindtap="onTodoMenuItem">预算</button>
       <button class="side-menu-item pending" data-title="分析" bindtap="onTodoMenuItem">分析</button>
       <button class="side-menu-item pending" data-title="我的" bindtap="onTodoMenuItem">我的</button>
     </view>

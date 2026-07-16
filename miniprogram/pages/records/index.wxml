@@ -4,7 +4,7 @@
     <view class="page-title">消费记录</view>
   </view>
 
-  <scroll-view class="filter-scroll" scroll-x="true" show-scrollbar="false">
+  <view class="filter-panel">
     <view class="filter-row">
       <button
         class="filter-chip {{selectedTypeId === item.id ? 'active' : ''}}"
@@ -14,7 +14,7 @@
         bindtap="onSelectType"
       >{{item.name}}</button>
     </view>
-  </scroll-view>
+  </view>
 
   <view class="state-panel" wx:if="{{status === 'loading'}}">
     <view class="state-title">加载中</view>
