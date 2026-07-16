@@ -234,6 +234,17 @@ function calculateOverBudgetAmount(remainingAmountYuan, expenseAmountYuan) {
   return "0.00";
 }
 
+function getExpenseRecords(period = getCurrentPeriod(), expenseTypeId = "all") {
+  const state = readBudgetState();
+  const records = getPeriodTransactions(state, period)
+    .map(normalizeTransaction)
+    .filter((item) => item.type === "expense")
+    .filter((item) => expenseTypeId === "all" || item.expense_type_id === expenseTypeId)
+    .sort((left, right) => String(right.occurred_at).localeCompare(String(left.occurred_at)));
+
+  return Promise.resolve(records);
+}
+
 function loadDashboard(period = getCurrentPeriod()) {
   const state = readBudgetState();
   return Promise.resolve(buildDashboardState(getBudgetSnapshot(state, period)));
@@ -316,6 +327,7 @@ module.exports = {
   buildDashboardState,
   createEmptyDashboardState,
   getCurrentPeriod,
+  getExpenseRecords,
   loadDashboard,
   normalizeBudgetAmountUpdate,
   readBudgetState,

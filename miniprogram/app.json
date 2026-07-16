@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/expense/index",
+    "pages/records/index",
     "pages/example/index"
   ],
   "window": {

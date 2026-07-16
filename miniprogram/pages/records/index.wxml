@@ -1,0 +1,44 @@
+<view class="page-shell">
+  <view class="page-header">
+    <view class="eyebrow">{{period}}</view>
+    <view class="page-title">消费记录</view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x="true" show-scrollbar="false">
+    <view class="filter-row">
+      <button
+        class="filter-chip {{selectedTypeId === item.id ? 'active' : ''}}"
+        wx:for="{{filters}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onSelectType"
+      >{{item.name}}</button>
+    </view>
+  </scroll-view>
+
+  <view class="state-panel" wx:if="{{status === 'loading'}}">
+    <view class="state-title">加载中</view>
+    <view class="state-text">正在读取消费记录</view>
+  </view>
+
+  <view class="state-panel error" wx:elif="{{status === 'error'}}">
+    <view class="state-title">加载失败</view>
+    <view class="state-text">{{errorMessage}}</view>
+  </view>
+
+  <view class="state-panel" wx:elif="{{status === 'empty'}}">
+    <view class="state-title">暂无记录</view>
+    <view class="state-text">当前类型还没有消费记录</view>
+  </view>
+
+  <view class="record-list" wx:else>
+    <view class="record-item" wx:for="{{records}}" wx:key="id">
+      <view class="record-main">
+        <view class="record-title">{{item.title}}</view>
+        <view class="record-meta">{{item.expense_type_name}} · {{item.occurred_at}}</view>
+        <view class="record-remark" wx:if="{{item.remark}}">{{item.remark}}</view>
+      </view>
+      <view class="record-amount">{{item.amountLabel}}</view>
+    </view>
+  </view>
+</view>

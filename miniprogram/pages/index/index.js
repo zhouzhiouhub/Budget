@@ -15,6 +15,7 @@ Page({
     budgetAmountInput: "",
     budgetEditorError: "",
     budgetEditorStatus: "idle",
+    showSideMenu: false,
   },
 
   onShow() {
@@ -111,6 +112,27 @@ Page({
           budgetEditorError: error.message || "预算保存失败",
         });
       });
+  },
+
+  onOpenSideMenu() {
+    this.setData({
+      showSideMenu: true,
+    });
+  },
+
+  onCloseSideMenu() {
+    this.setData({
+      showSideMenu: false,
+    });
+  },
+
+  onViewRecords() {
+    this.setData({
+      showSideMenu: false,
+    });
+    wx.navigateTo({
+      url: "/pages/records/index",
+    });
   },
 
   onAddExpense() {

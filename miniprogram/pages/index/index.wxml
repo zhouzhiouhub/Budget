@@ -1,6 +1,11 @@
 <view class="page-shell">
   <view class="app-header">
-    <view>
+    <button class="menu-button" aria-label="打开菜单" bindtap="onOpenSideMenu">
+      <view class="menu-button-line"></view>
+      <view class="menu-button-line"></view>
+      <view class="menu-button-line"></view>
+    </button>
+    <view class="header-title-group">
       <view class="eyebrow">{{summary.period_label}}</view>
       <view class="page-title">预算管理</view>
     </view>
@@ -67,7 +72,7 @@
 
     <view class="section-row transaction-title">
       <view class="section-title">最近花费</view>
-      <view class="section-count">最多 5 笔</view>
+      <view class="section-count">最近 5 笔</view>
     </view>
 
     <view class="transaction-list">
@@ -80,6 +85,21 @@
       </view>
     </view>
   </block>
+
+  <view class="side-menu-mask" wx:if="{{showSideMenu}}" bindtap="onCloseSideMenu"></view>
+  <view class="side-menu-panel" wx:if="{{showSideMenu}}">
+    <view class="side-menu-header">
+      <view>
+        <view class="side-menu-label">BudgetFlow</view>
+        <view class="side-menu-title">菜单</view>
+      </view>
+      <button class="side-menu-close" aria-label="关闭菜单" bindtap="onCloseSideMenu">×</button>
+    </view>
+    <view class="side-menu-list">
+      <button class="side-menu-item active" bindtap="onCloseSideMenu">首页</button>
+      <button class="side-menu-item" bindtap="onViewRecords">消费记录</button>
+    </view>
+  </view>
 
   <view class="modal-mask" wx:if="{{showBudgetEditor}}">
     <view class="budget-editor">
