@@ -88,7 +88,6 @@
   <view class="side-menu-panel" wx:if="{{showSideMenu}}">
     <view class="side-menu-header">
       <view>
-        <view class="side-menu-label">BudgetFlow</view>
         <view class="side-menu-title">菜单</view>
       </view>
       <button class="side-menu-close" aria-label="关闭菜单" bindtap="onCloseSideMenu">×</button>
