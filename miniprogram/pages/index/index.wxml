@@ -66,8 +66,8 @@
     </view>
 
     <view class="section-row transaction-title">
-      <view class="section-title">近期流水</view>
-      <view class="section-count">{{transactions.length}} 笔</view>
+      <view class="section-title">最近花费</view>
+      <view class="section-count">最多 5 笔</view>
     </view>
 
     <view class="transaction-list">

@@ -64,6 +64,14 @@ function sumExpenseAmountYuan(transactions) {
   return addAmountYuan(...expenseAmounts);
 }
 
+function getRecentExpenseTransactions(transactions, limit = 5) {
+  return transactions
+    .filter((item) => item.type === "expense")
+    .slice()
+    .sort((left, right) => String(right.occurred_at).localeCompare(String(left.occurred_at)))
+    .slice(0, limit);
+}
+
 function normalizeBudgetAmountUpdate(amountYuan) {
   const totalAmountYuan = normalizeAmountYuan(amountYuan);
   if (compareAmountYuan(totalAmountYuan, "0.00") <= 0) {
@@ -103,7 +111,7 @@ function createEmptyDashboardState(period = getCurrentPeriod()) {
 
 function buildDashboardState(snapshot = {}) {
   const period = snapshot.period || getCurrentPeriod();
-  const transactions = (snapshot.transactions || []).map(normalizeTransaction);
+  const allTransactions = (snapshot.transactions || []).map(normalizeTransaction);
 
   if (!snapshot.total_amount_yuan) {
     return createEmptyDashboardState(period);
@@ -112,10 +120,11 @@ function buildDashboardState(snapshot = {}) {
   const totalAmountYuan = normalizeAmountYuan(snapshot.total_amount_yuan);
   const usedAmountYuan = snapshot.used_amount_yuan
     ? normalizeAmountYuan(snapshot.used_amount_yuan)
-    : sumExpenseAmountYuan(transactions);
+    : sumExpenseAmountYuan(allTransactions);
   const remainingAmountYuan = subtractAmountYuan(totalAmountYuan, usedAmountYuan);
   const usage = calculateBudgetUsage(usedAmountYuan, totalAmountYuan);
   const remaining = getRemainingDisplay(remainingAmountYuan);
+  const recentExpenseTransactions = getRecentExpenseTransactions(allTransactions);
 
   return {
     summary: {
@@ -137,7 +146,7 @@ function buildDashboardState(snapshot = {}) {
       usedRateText: usage.usedRateText,
       progressPercent: usage.progressPercent,
     },
-    transactions,
+    transactions: recentExpenseTransactions,
   };
 }
 
@@ -175,6 +184,33 @@ function createDemoBudgetSnapshot(period = getCurrentPeriod()) {
         expense_type_name: "办公",
         amount_yuan: "68.00",
         occurred_at: `${period}-14`,
+      },
+      {
+        id: "txn-004",
+        type: "expense",
+        title: "咖啡",
+        expense_type_id: "food",
+        expense_type_name: "餐饮",
+        amount_yuan: "28.00",
+        occurred_at: `${period}-13`,
+      },
+      {
+        id: "txn-005",
+        type: "expense",
+        title: "打车",
+        expense_type_id: "transport",
+        expense_type_name: "交通",
+        amount_yuan: "35.00",
+        occurred_at: `${period}-12`,
+      },
+      {
+        id: "txn-006",
+        type: "expense",
+        title: "电影票",
+        expense_type_id: "entertainment",
+        expense_type_name: "娱乐",
+        amount_yuan: "66.00",
+        occurred_at: `${period}-11`,
       },
     ],
   };
