@@ -6,13 +6,14 @@
 
   <view class="filter-panel">
     <view class="filter-row">
-      <button
-        class="filter-chip {{selectedTypeId === item.id ? 'active' : ''}}"
-        wx:for="{{filters}}"
-        wx:key="id"
-        data-id="{{item.id}}"
-        bindtap="onSelectType"
-      >{{item.name}}</button>
+      <view class="filter-cell" wx:for="{{filters}}" wx:key="id">
+        <view
+          class="filter-chip {{selectedTypeId === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSelectType"
+          hover-class="filter-chip-pressed"
+        >{{item.name}}</view>
+      </view>
     </view>
   </view>
 
