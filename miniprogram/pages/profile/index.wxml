@@ -17,7 +17,6 @@
         <view class="page-title">{{userProfile.nickname}}</view>
         <button class="edit-icon-button" aria-label="编辑昵称" bindtap="onOpenNicknameEditor">✎</button>
       </view>
-      <view class="profile-desc">个人预算与偏好设置</view>
     </view>
   </view>
 
@@ -37,10 +36,16 @@
       <view class="section-title">预算设置</view>
       <view class="section-desc">设置本月总预算，后续消费会从这里扣减。</view>
       <view class="budget-setting-row">
-        <view class="budget-month-segment">
+        <picker
+          class="budget-month-segment"
+          mode="date"
+          fields="month"
+          value="{{selectedBudgetPeriod}}"
+          bindchange="onBudgetPeriodChange"
+        >
           <view class="segment-label">月份</view>
-          <view class="segment-value">{{summary.period_label}}</view>
-        </view>
+          <view class="segment-value"><text>{{summary.period_label}}</text><text class="picker-arrow">⌄</text></view>
+        </picker>
         <view class="budget-amount-segment">
           <view class="segment-label">预算金额</view>
           <view class="budget-amount-input-row">
@@ -59,7 +64,7 @@
       <button
         class="save-button"
         loading="{{budgetEditorStatus === 'saving'}}"
-        disabled="{{budgetEditorStatus === 'saving'}}"
+        disabled="{{budgetEditorStatus === 'saving' || budgetEditorStatus === 'loading'}}"
         bindtap="onSaveBudgetAmount"
       >保存预算</button>
     </view>

@@ -1,5 +1,6 @@
 const {
   createEmptyDashboardState,
+  getCurrentPeriod,
   loadDashboard,
   normalizeBudgetAmountUpdate,
   saveBudgetAmount,
@@ -17,6 +18,7 @@ Page({
     summary: createEmptyDashboardState().summary,
     userProfile: createDefaultUserProfile(),
     errorMessage: "",
+    selectedBudgetPeriod: getCurrentPeriod(),
     budgetAmountInput: "",
     budgetEditorError: "",
     budgetEditorStatus: "idle",
@@ -43,11 +45,14 @@ Page({
       errorMessage: "",
     });
 
-    return Promise.all([loadDashboard(), loadUserProfile()])
+    const selectedBudgetPeriod = this.data.selectedBudgetPeriod || getCurrentPeriod();
+
+    return Promise.all([loadDashboard(selectedBudgetPeriod), loadUserProfile()])
       .then(([dashboard, userProfile]) => {
         this.setData({
           status: "success",
           summary: dashboard.summary,
+          selectedBudgetPeriod: dashboard.summary.period,
           userProfile,
           budgetAmountInput: dashboard.summary.has_budget ? dashboard.summary.total_amount_yuan : "",
           budgetEditorError: "",
@@ -178,6 +183,33 @@ Page({
       });
   },
 
+  onBudgetPeriodChange(event) {
+    const selectedBudgetPeriod = event.detail.value || getCurrentPeriod();
+
+    this.setData({
+      selectedBudgetPeriod,
+      budgetEditorError: "",
+      budgetEditorStatus: "loading",
+    });
+
+    loadDashboard(selectedBudgetPeriod)
+      .then((dashboard) => {
+        this.setData({
+          summary: dashboard.summary,
+          selectedBudgetPeriod: dashboard.summary.period,
+          budgetAmountInput: dashboard.summary.has_budget ? dashboard.summary.total_amount_yuan : "",
+          budgetEditorError: "",
+          budgetEditorStatus: "idle",
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          budgetEditorStatus: "error",
+          budgetEditorError: error.message || "预算月份加载失败",
+        });
+      });
+  },
+
   onBudgetAmountInput(event) {
     this.setData({
       budgetAmountInput: event.detail.value,
@@ -201,11 +233,12 @@ Page({
       return;
     }
 
-    saveBudgetAmount(this.data.budgetAmountInput, this.data.summary.period)
+    saveBudgetAmount(this.data.budgetAmountInput, this.data.selectedBudgetPeriod || this.data.summary.period)
       .then((dashboard) => {
         this.setData({
           status: "success",
           summary: dashboard.summary,
+          selectedBudgetPeriod: dashboard.summary.period,
           budgetAmountInput: dashboard.summary.total_amount_yuan,
           budgetEditorStatus: "idle",
           budgetEditorError: "",
