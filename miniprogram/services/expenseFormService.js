@@ -21,6 +21,11 @@ const EXPENSE_TYPES = [
     name: "娱乐",
     description: "电影、游戏、聚会",
   },
+  {
+    id: "other",
+    name: "其他",
+    description: "无法归入现有分类的消费",
+  },
 ];
 
 function createExpenseFormState() {
