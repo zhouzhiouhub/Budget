@@ -7,7 +7,6 @@ Page({
   data: {
     status: "loading",
     summary: createEmptyDashboardState().summary,
-    categories: [],
     transactions: [],
     errorMessage: "",
   },
@@ -31,9 +30,8 @@ Page({
     return loadDashboard()
       .then((dashboard) => {
         this.setData({
-          status: dashboard.categories.length ? "success" : "empty",
+          status: dashboard.summary.has_budget ? "success" : "empty",
           summary: dashboard.summary,
-          categories: dashboard.categories,
           transactions: dashboard.transactions,
         });
       })
@@ -47,7 +45,7 @@ Page({
 
   onCreateBudget() {
     wx.showToast({
-      title: "预算创建待接入",
+      title: "总预算创建待接入",
       icon: "none",
     });
   },

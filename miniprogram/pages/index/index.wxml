@@ -10,7 +10,7 @@
   <block wx:if="{{status === 'loading'}}">
     <view class="state-panel">
       <view class="state-title">加载中</view>
-      <view class="state-text">正在整理本月预算</view>
+      <view class="state-text">正在整理本月总预算</view>
     </view>
   </block>
 
@@ -25,8 +25,8 @@
   <block wx:elif="{{status === 'empty'}}">
     <view class="state-panel">
       <view class="state-title">暂无预算</view>
-      <view class="state-text">本月还没有可用的预算分类</view>
-      <button class="primary-button" bindtap="onCreateBudget">新建预算</button>
+      <view class="state-text">本月还没有设置总预算</view>
+      <button class="primary-button" bindtap="onCreateBudget">设置总预算</button>
     </view>
   </block>
 
@@ -39,9 +39,18 @@
         </view>
         <view class="status-badge">{{summary.statusText}}</view>
       </view>
-      <view class="summary-meta">
-        已用 {{summary.used_amount_yuan}} / {{summary.total_amount_yuan}} 元
+
+      <view class="budget-metrics">
+        <view class="metric-item">
+          <view class="metric-label">总预算</view>
+          <view class="metric-value">{{summary.totalDisplay}}</view>
+        </view>
+        <view class="metric-item">
+          <view class="metric-label">已使用</view>
+          <view class="metric-value">{{summary.usedDisplay}}</view>
+        </view>
       </view>
+
       <view class="progress-track">
         <view class="progress-fill" style="width: {{summary.progressPercent}}%;"></view>
       </view>
@@ -53,35 +62,7 @@
 
     <view class="quick-actions">
       <button class="primary-button" bindtap="onAddExpense">记一笔支出</button>
-      <button class="secondary-button" bindtap="onCreateBudget">调整预算</button>
-    </view>
-
-    <view class="section-row">
-      <view class="section-title">分类预算</view>
-      <view class="section-count">{{categories.length}} 项</view>
-    </view>
-
-    <view class="category-list">
-      <view class="category-card {{item.statusClass}}" wx:for="{{categories}}" wx:key="id">
-        <view class="category-head">
-          <view class="category-name">
-            <view class="color-dot" style="background: {{item.color}};"></view>
-            <text>{{item.name}}</text>
-          </view>
-          <view class="category-status">{{item.statusText}}</view>
-        </view>
-        <view class="category-amount">
-          <text>{{item.used_amount_yuan}}</text>
-          <text class="muted"> / {{item.amount_yuan}} 元</text>
-        </view>
-        <view class="progress-track slim">
-          <view class="progress-fill" style="width: {{item.progressPercent}}%;"></view>
-        </view>
-        <view class="category-foot">
-          <text>{{item.usedRateText}}</text>
-          <text>{{item.remainingDisplay}}</text>
-        </view>
-      </view>
+      <button class="secondary-button" bindtap="onCreateBudget">调整总预算</button>
     </view>
 
     <view class="section-row transaction-title">
@@ -93,7 +74,7 @@
       <view class="transaction-item" wx:for="{{transactions}}" wx:key="id">
         <view>
           <view class="transaction-name">{{item.title}}</view>
-          <view class="transaction-meta">{{item.category_name}} · {{item.occurred_at}}</view>
+          <view class="transaction-meta">{{item.metaText}}</view>
         </view>
         <view class="transaction-amount">{{item.amountLabel}}</view>
       </view>

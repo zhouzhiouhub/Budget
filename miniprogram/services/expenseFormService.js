@@ -74,8 +74,8 @@ function buildExpenseDraft(formData, expenseTypes = EXPENSE_TYPES) {
 
   return {
     type: "expense",
-    category_id: selectedType.id,
-    category_name: selectedType.name,
+    expense_type_id: selectedType.id,
+    expense_type_name: selectedType.name,
     amount_yuan: amountYuan,
     remark,
   };

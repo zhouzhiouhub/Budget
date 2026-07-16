@@ -7,13 +7,6 @@ const {
   subtractAmountYuan,
 } = require("../utils/money");
 
-const CATEGORY_COLORS = {
-  food: "#13795b",
-  transport: "#2563eb",
-  office: "#d97706",
-  entertainment: "#be123c",
-};
-
 function getCurrentPeriod(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -46,47 +39,35 @@ function getRemainingDisplay(amountYuan) {
   };
 }
 
-function normalizeCategory(category) {
-  const amountYuan = normalizeAmountYuan(category.amount_yuan);
-  const usedAmountYuan = normalizeAmountYuan(category.used_amount_yuan || "0.00");
-  const remainingAmountYuan = subtractAmountYuan(amountYuan, usedAmountYuan);
-  const usage = calculateBudgetUsage(usedAmountYuan, amountYuan);
-  const remaining = getRemainingDisplay(remainingAmountYuan);
-
-  return {
-    id: category.id,
-    name: category.name,
-    amount_yuan: amountYuan,
-    used_amount_yuan: usedAmountYuan,
-    remaining_amount_yuan: remainingAmountYuan,
-    remainingDisplay: remaining.remainingDisplay,
-    color: category.color || CATEGORY_COLORS[category.id] || "#617064",
-    status: usage.status,
-    statusClass: getStatusClass(usage.status),
-    statusText: usage.statusText,
-    usedRateText: usage.usedRateText,
-    progressPercent: usage.progressPercent,
-  };
-}
-
 function normalizeTransaction(transaction) {
   const amountYuan = normalizeAmountYuan(transaction.amount_yuan);
+  const expenseTypeName = transaction.expense_type_name || "未分类";
 
   return {
     id: transaction.id,
     type: transaction.type,
     title: transaction.title,
-    category_id: transaction.category_id,
-    category_name: transaction.category_name,
+    expense_type_id: transaction.expense_type_id || "",
+    expense_type_name: expenseTypeName,
     amount_yuan: amountYuan,
     amountLabel: transaction.type === "expense" ? `-${amountYuan} 元` : `${amountYuan} 元`,
     occurred_at: transaction.occurred_at,
+    metaText: `${expenseTypeName} · ${transaction.occurred_at}`,
   };
+}
+
+function sumExpenseAmountYuan(transactions) {
+  const expenseAmounts = transactions
+    .filter((item) => item.type === "expense")
+    .map((item) => item.amount_yuan);
+
+  return addAmountYuan(...expenseAmounts);
 }
 
 function createEmptyDashboardState(period = getCurrentPeriod()) {
   return {
     summary: {
+      has_budget: false,
       period,
       period_label: getPeriodLabel(period),
       scope: "personal",
@@ -94,6 +75,8 @@ function createEmptyDashboardState(period = getCurrentPeriod()) {
       total_amount_yuan: "0.00",
       used_amount_yuan: "0.00",
       remaining_amount_yuan: "0.00",
+      totalDisplay: "0.00 元",
+      usedDisplay: "0.00 元",
       remainingTitle: "剩余额度",
       remainingDisplay: "0.00 元",
       status: "zero_budget",
@@ -102,28 +85,29 @@ function createEmptyDashboardState(period = getCurrentPeriod()) {
       usedRateText: "0%",
       progressPercent: "0",
     },
-    categories: [],
     transactions: [],
   };
 }
 
-function buildDashboardState(snapshot) {
+function buildDashboardState(snapshot = {}) {
   const period = snapshot.period || getCurrentPeriod();
-  const categories = (snapshot.categories || []).map(normalizeCategory);
   const transactions = (snapshot.transactions || []).map(normalizeTransaction);
 
-  if (!categories.length) {
+  if (!snapshot.total_amount_yuan) {
     return createEmptyDashboardState(period);
   }
 
-  const totalAmountYuan = addAmountYuan(...categories.map((item) => item.amount_yuan));
-  const usedAmountYuan = addAmountYuan(...categories.map((item) => item.used_amount_yuan));
+  const totalAmountYuan = normalizeAmountYuan(snapshot.total_amount_yuan);
+  const usedAmountYuan = snapshot.used_amount_yuan
+    ? normalizeAmountYuan(snapshot.used_amount_yuan)
+    : sumExpenseAmountYuan(transactions);
   const remainingAmountYuan = subtractAmountYuan(totalAmountYuan, usedAmountYuan);
   const usage = calculateBudgetUsage(usedAmountYuan, totalAmountYuan);
   const remaining = getRemainingDisplay(remainingAmountYuan);
 
   return {
     summary: {
+      has_budget: compareAmountYuan(totalAmountYuan, "0.00") > 0,
       period,
       period_label: getPeriodLabel(period),
       scope: snapshot.scope || "personal",
@@ -131,6 +115,8 @@ function buildDashboardState(snapshot) {
       total_amount_yuan: totalAmountYuan,
       used_amount_yuan: usedAmountYuan,
       remaining_amount_yuan: remainingAmountYuan,
+      totalDisplay: `${totalAmountYuan} 元`,
+      usedDisplay: `${usedAmountYuan} 元`,
       remainingTitle: remaining.remainingTitle,
       remainingDisplay: remaining.remainingDisplay,
       status: usage.status,
@@ -139,7 +125,6 @@ function buildDashboardState(snapshot) {
       usedRateText: usage.usedRateText,
       progressPercent: usage.progressPercent,
     },
-    categories,
     transactions,
   };
 }
@@ -149,39 +134,15 @@ function createDemoBudgetSnapshot(period = getCurrentPeriod()) {
     id: `budget-${period}`,
     scope: "personal",
     period,
-    categories: [
-      {
-        id: "food",
-        name: "餐饮",
-        amount_yuan: "1800.00",
-        used_amount_yuan: "1268.40",
-      },
-      {
-        id: "transport",
-        name: "交通",
-        amount_yuan: "600.00",
-        used_amount_yuan: "328.00",
-      },
-      {
-        id: "office",
-        name: "办公",
-        amount_yuan: "900.00",
-        used_amount_yuan: "765.20",
-      },
-      {
-        id: "entertainment",
-        name: "娱乐",
-        amount_yuan: "500.00",
-        used_amount_yuan: "540.00",
-      },
-    ],
+    total_amount_yuan: "3800.00",
+    used_amount_yuan: "2901.60",
     transactions: [
       {
         id: "txn-001",
         type: "expense",
         title: "午餐",
-        category_id: "food",
-        category_name: "餐饮",
+        expense_type_id: "food",
+        expense_type_name: "餐饮",
         amount_yuan: "42.00",
         occurred_at: `${period}-16`,
       },
@@ -189,8 +150,8 @@ function createDemoBudgetSnapshot(period = getCurrentPeriod()) {
         id: "txn-002",
         type: "expense",
         title: "地铁通勤",
-        category_id: "transport",
-        category_name: "交通",
+        expense_type_id: "transport",
+        expense_type_name: "交通",
         amount_yuan: "8.00",
         occurred_at: `${period}-15`,
       },
@@ -198,8 +159,8 @@ function createDemoBudgetSnapshot(period = getCurrentPeriod()) {
         id: "txn-003",
         type: "expense",
         title: "资料订阅",
-        category_id: "office",
-        category_name: "办公",
+        expense_type_id: "office",
+        expense_type_name: "办公",
         amount_yuan: "68.00",
         occurred_at: `${period}-14`,
       },

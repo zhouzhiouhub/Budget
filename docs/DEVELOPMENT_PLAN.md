@@ -49,9 +49,9 @@ budget-system/
 ```text
 User
   -> BudgetPeriod
-    -> BudgetCategory
-      -> ExpenseRecord
-      -> BudgetMutation
+    -> ExpenseRecord
+    -> BudgetMutation
+    -> ExpenseType
 
 Organization
   -> Department
@@ -66,13 +66,15 @@ Organization
 - `Organization`：企业或团队空间。
 - `Member`：组织成员与角色关系。
 - `BudgetPeriod`：预算周期，例如 `2026-07`。
-- `BudgetCategory`：周期内的分类预算，例如餐饮、交通。
+- `ExpenseType`：消费类型，例如餐饮、交通，仅用于流水分类和分析，不单独设置预算额度。
 - `ExpenseRecord`：消费记录，触发预算扣减。
 - `BudgetMutation`：预算变更审计记录，覆盖消费、退款、调整、追加预算。
 - `Notification`：提醒与消息中心记录。
 - `ApprovalFlow`：企业报销或预算申请审批流。
 
 ## 6. 金额与预算规则
+
+MVP 产品裁剪：个人预算阶段只设置一个 `total_amount_yuan` 总预算。消费类型只用于记录、搜索和分析，不再为每个类型配置独立预算额度。
 
 - 金额单位统一为元。
 - 金额字段使用 `_yuan` 后缀，例如 `amount_yuan`、`used_amount_yuan`。
@@ -92,10 +94,10 @@ Organization
 
 ```text
 创建 ExpenseRecord
--> 查找 BudgetCategory
--> 校验剩余额度
+-> 读取当前 BudgetPeriod 总预算
+-> 校验总剩余额度
 -> 写入 BudgetMutation
--> 更新 used_amount_yuan
+-> 更新总 used_amount_yuan
 -> 更新统计
 -> 返回最新预算摘要
 ```
@@ -107,7 +109,7 @@ MVP 表：
 ```text
 users
 budget_periods
-budget_categories
+expense_types
 expense_records
 budget_mutations
 notifications
@@ -137,16 +139,15 @@ budget_periods:
   id, user_id, organization_id, period, total_amount_yuan,
   used_amount_yuan, status, created_at, updated_at
 
-budget_categories:
-  id, budget_period_id, category_key, name, amount_yuan,
-  used_amount_yuan, created_at, updated_at
+expense_types:
+  id, user_id, organization_id, type_key, name, created_at, updated_at
 
 expense_records:
-  id, user_id, organization_id, budget_period_id, budget_category_id,
+  id, user_id, organization_id, budget_period_id, expense_type_id,
   amount_yuan, remark, occurred_at, created_at, updated_at
 
 budget_mutations:
-  id, budget_period_id, budget_category_id, expense_record_id,
+  id, budget_period_id, expense_record_id,
   mutation_type, amount_yuan, before_used_amount_yuan,
   after_used_amount_yuan, over_budget_amount_yuan,
   created_by, created_at
@@ -160,7 +161,7 @@ notifications:
 
 - `users.openid` 唯一索引。
 - `budget_periods(user_id, period)` 唯一索引。
-- `budget_categories(budget_period_id, category_key)` 唯一索引。
+- `expense_types(user_id, type_key)` 普通索引。
 - `expense_records(user_id, occurred_at)` 普通索引。
 - `budget_mutations(budget_period_id, created_at)` 普通索引。
 
@@ -174,8 +175,6 @@ GET    /user/profile
 POST   /budgets
 GET    /budgets/current
 GET    /budgets/:period
-POST   /budget/categories
-GET    /budget/categories
 POST   /expenses
 GET    /expenses
 GET    /analytics/current
@@ -212,7 +211,7 @@ API 约束：
 登录/授权
 预算首页
 创建预算
-分类预算设置
+消费类型设置
 添加消费
 消费列表
 消息中心
@@ -271,7 +270,7 @@ Week 1：基础功能
 | --- | --- | --- |
 | Day 1-2 | 用户系统 | 登录、用户资料、会话校验 |
 | Day 3-4 | 预算创建 | 月预算创建、当前预算查询 |
-| Day 5-7 | 分类预算 | 分类设置、剩余金额展示 |
+| Day 5-7 | 总预算与消费类型 | 总预算调整、消费类型设置 |
 
 Week 2：消费闭环
 
@@ -283,8 +282,8 @@ Week 2：消费闭环
 
 Phase 1 验收标准：
 
-- 用户可以创建月预算。
-- 用户可以设置分类预算。
+- 用户可以创建月度总预算。
+- 用户可以设置一个月度总预算。
 - 用户可以添加消费。
 - 消费后自动扣减预算。
 - 预算剩余金额准确展示。
