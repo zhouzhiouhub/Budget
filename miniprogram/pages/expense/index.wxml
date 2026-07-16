@@ -1,8 +1,10 @@
 <view class="page-shell">
   <view class="page-header">
-    <view class="eyebrow">新增流水</view>
+    <view class="eyebrow">{{periodLabel}}</view>
     <view class="page-title">选择消费类型</view>
   </view>
+
+  <view class="readonly-hint" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
 
   <view class="form-section">
     <view class="section-title">消费类型</view>
@@ -13,6 +15,7 @@
         wx:key="id"
         data-id="{{item.id}}"
         bindtap="onSelectType"
+        disabled="{{periodEditPolicy.is_readonly}}"
       >
         <view class="type-name">{{item.name}}</view>
         <view class="type-desc">{{item.description}}</view>
@@ -30,6 +33,7 @@
         value="{{amount_yuan}}"
         placeholder="0.00"
         bindinput="onAmountInput"
+        disabled="{{periodEditPolicy.is_readonly}}"
       />
     </view>
   </view>
@@ -43,11 +47,12 @@
       auto-height="{{false}}"
       placeholder="写点备注，例如：和客户午餐、打车去公司"
       bindinput="onRemarkInput"
+      disabled="{{periodEditPolicy.is_readonly}}"
     />
     <view class="remark-counter">{{remark.length}} / 80</view>
   </view>
 
-  <view class="hint-card" wx:if="{{!selectedTypeId}}">
+  <view class="hint-card" wx:if="{{!selectedTypeId && !periodEditPolicy.is_readonly}}">
     先选择消费类型，随后可填写金额和备注。
   </view>
 
@@ -57,7 +62,7 @@
   <button
     class="submit-button"
     loading="{{status === 'submitting'}}"
-    disabled="{{status === 'submitting'}}"
+    disabled="{{status === 'submitting' || periodEditPolicy.is_readonly}}"
     bindtap="onSubmit"
   >
     保存消费

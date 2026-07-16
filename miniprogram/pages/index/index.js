@@ -1,15 +1,20 @@
 const {
   createEmptyDashboardState,
   loadDashboard,
+  loadSelectedViewPeriod,
 } = require("../../services/budgetService");
+
+const initialSummary = createEmptyDashboardState().summary;
 
 Page({
   data: {
     status: "loading",
-    summary: createEmptyDashboardState().summary,
+    summary: initialSummary,
     transactions: [],
     errorMessage: "",
     showSideMenu: false,
+    viewPeriod: initialSummary.period,
+    periodEditPolicy: initialSummary.period_edit_policy,
   },
 
   onShow() {
@@ -28,12 +33,15 @@ Page({
       errorMessage: "",
     });
 
-    return loadDashboard()
-      .then((dashboard) => {
+    return loadSelectedViewPeriod()
+      .then((viewPeriod) => loadDashboard(viewPeriod.period).then((dashboard) => ({ viewPeriod, dashboard })))
+      .then(({ viewPeriod, dashboard }) => {
         this.setData({
           status: dashboard.summary.has_budget ? "success" : "empty",
           summary: dashboard.summary,
           transactions: dashboard.transactions,
+          viewPeriod: viewPeriod.period,
+          periodEditPolicy: dashboard.summary.period_edit_policy || viewPeriod.edit_policy,
         });
       })
       .catch((error) => {
@@ -66,9 +74,19 @@ Page({
   },
 
   onAddExpense() {
+    const editPolicy = this.data.periodEditPolicy || {};
     this.setData({
       showSideMenu: false,
     });
+
+    if (editPolicy.is_readonly) {
+      wx.showToast({
+        title: editPolicy.readonly_text || "当前月份只能查看",
+        icon: "none",
+      });
+      return;
+    }
+
     wx.navigateTo({
       url: "/pages/expense/index",
     });

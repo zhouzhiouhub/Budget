@@ -3,7 +3,22 @@ const {
   createExpenseRecordDraft,
   selectExpenseType,
 } = require("../../services/expenseFormService");
-const { saveExpenseRecord } = require("../../services/budgetService");
+const {
+  loadSelectedViewPeriod,
+  saveExpenseRecord,
+} = require("../../services/budgetService");
+
+function createPageState() {
+  return {
+    ...createExpenseFormState(),
+    period: "",
+    periodLabel: "新增流水",
+    periodEditPolicy: {
+      is_readonly: false,
+      readonly_text: "",
+    },
+  };
+}
 
 function returnToHome() {
   const pages = getCurrentPages();
@@ -21,10 +36,31 @@ function returnToHome() {
 }
 
 Page({
-  data: createExpenseFormState(),
+  data: createPageState(),
 
   onLoad() {
-    this.setData(createExpenseFormState());
+    this.setData(createPageState());
+  },
+
+  onShow() {
+    this.refreshViewPeriod();
+  },
+
+  refreshViewPeriod() {
+    return loadSelectedViewPeriod()
+      .then((viewPeriod) => {
+        this.setData({
+          period: viewPeriod.period,
+          periodLabel: viewPeriod.period_label,
+          periodEditPolicy: viewPeriod.edit_policy,
+          errorMessage: viewPeriod.edit_policy.is_readonly ? "" : this.data.errorMessage,
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          errorMessage: error.message || "月份状态加载失败",
+        });
+      });
   },
 
   onSelectType(event) {
@@ -56,14 +92,23 @@ Page({
   },
 
   onSubmit() {
+    const editPolicy = this.data.periodEditPolicy || {};
+    if (editPolicy.is_readonly) {
+      this.setData({
+        status: "error",
+        errorMessage: editPolicy.readonly_text || "当前月份只能查看",
+      });
+      return;
+    }
+
     this.setData({
       status: "submitting",
       errorMessage: "",
       successMessage: "",
     });
 
-    createExpenseRecordDraft(this.data, this.data.expenseTypes)
-      .then((result) => saveExpenseRecord(result.data))
+    createExpenseRecordDraft(this.data, this.data.expenseTypes, this.data.period)
+      .then((result) => saveExpenseRecord(result.data, this.data.period))
       .then(() => {
         this.setData({
           status: "success",

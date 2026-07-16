@@ -1,8 +1,10 @@
 <view class="page-shell">
   <view class="page-header">
-    <view class="eyebrow">{{period}}</view>
+    <view class="eyebrow">{{periodLabel}}</view>
     <view class="page-title">消费</view>
   </view>
+
+  <view class="readonly-note" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
 
   <view class="filter-panel">
     <view class="filter-row">

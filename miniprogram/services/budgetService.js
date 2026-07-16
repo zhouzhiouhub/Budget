@@ -17,6 +17,10 @@ function getCurrentPeriod(date = new Date()) {
   return `${year}-${month}`;
 }
 
+function normalizePeriod(period, fallback = getCurrentPeriod()) {
+  const normalizedPeriod = String(period || "").trim();
+  return /^\d{4}-\d{2}$/.test(normalizedPeriod) ? normalizedPeriod : fallback;
+}
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -24,8 +28,51 @@ function getLocalDateString(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
+function getPreviousPeriod(date = new Date()) {
+  return getCurrentPeriod(new Date(date.getFullYear(), date.getMonth() - 1, 1));
+}
+
+function getLastDateOfPeriod(period) {
+  const normalizedPeriod = normalizePeriod(period);
+  const [year, month] = normalizedPeriod.split("-").map((item) => Number(item));
+  return getLocalDateString(new Date(year, month, 0));
+}
+
+function getDefaultOccurredDateForPeriod(period) {
+  const normalizedPeriod = normalizePeriod(period);
+  return normalizedPeriod === getCurrentPeriod() ? getLocalDateString() : getLastDateOfPeriod(normalizedPeriod);
+}
+
+function getPeriodEditPolicy(period = getCurrentPeriod(), date = new Date()) {
+  const normalizedPeriod = normalizePeriod(period);
+  const currentPeriod = getCurrentPeriod(date);
+  const previousPeriod = getPreviousPeriod(date);
+  const isCurrentPeriod = normalizedPeriod === currentPeriod;
+  const isPreviousGracePeriod = normalizedPeriod === previousPeriod && date.getDate() <= 2;
+  const canEditRecords = isCurrentPeriod || isPreviousGracePeriod;
+  const periodLabel = getPeriodLabel(normalizedPeriod);
+
+  return {
+    period: normalizedPeriod,
+    period_label: periodLabel,
+    is_current_period: isCurrentPeriod,
+    is_previous_grace_period: isPreviousGracePeriod,
+    can_edit_records: canEditRecords,
+    can_edit_budget: canEditRecords,
+    is_readonly: !canEditRecords,
+    readonly_text: canEditRecords ? "" : `${periodLabel}仅可查看，当前只能编辑本月记录；每月前两天可编辑上月记录`,
+  };
+}
+
+function assertPeriodEditable(period) {
+  const policy = getPeriodEditPolicy(period);
+  if (!policy.can_edit_records) {
+    throw new Error(policy.readonly_text);
+  }
+  return policy;
+}
 function getPeriodLabel(period) {
-  const parts = period.split("-");
+  const parts = normalizePeriod(period).split("-");
   return `${parts[0]}年${Number(parts[1])}月`;
 }
 
@@ -70,6 +117,7 @@ function createInitialBudgetState() {
     budgets: {},
     transactions: [],
     mutations: [],
+    selected_view_period: getCurrentPeriod(),
   };
 }
 
@@ -79,6 +127,7 @@ function normalizeBudgetState(rawState) {
     budgets: state.budgets && typeof state.budgets === "object" ? state.budgets : {},
     transactions: Array.isArray(state.transactions) ? state.transactions : [],
     mutations: Array.isArray(state.mutations) ? state.mutations : [],
+    selected_view_period: normalizePeriod(state.selected_view_period),
   };
 }
 
@@ -103,6 +152,29 @@ function writeBudgetState(state) {
   return normalizedState;
 }
 
+function buildViewPeriodState(period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  return {
+    period: normalizedPeriod,
+    period_label: getPeriodLabel(normalizedPeriod),
+    edit_policy: getPeriodEditPolicy(normalizedPeriod),
+  };
+}
+
+function getSelectedViewPeriod() {
+  return readBudgetState().selected_view_period || getCurrentPeriod();
+}
+
+function loadSelectedViewPeriod() {
+  return Promise.resolve(buildViewPeriodState(getSelectedViewPeriod()));
+}
+
+function saveSelectedViewPeriod(period) {
+  const state = readBudgetState();
+  state.selected_view_period = normalizePeriod(period);
+  const nextState = writeBudgetState(state);
+  return Promise.resolve(buildViewPeriodState(nextState.selected_view_period));
+}
 function getStatusClass(status) {
   if (status === "over_budget") {
     return "over-budget";
@@ -195,6 +267,7 @@ function createEmptyDashboardState(period = getCurrentPeriod()) {
       has_budget: false,
       period,
       period_label: getPeriodLabel(period),
+      period_edit_policy: getPeriodEditPolicy(period),
       scope: "personal",
       scope_label: "个人",
       total_amount_yuan: "0.00",
@@ -236,6 +309,7 @@ function buildDashboardState(snapshot = {}) {
       has_budget: compareAmountYuan(totalAmountYuan, "0.00") > 0,
       period,
       period_label: getPeriodLabel(period),
+      period_edit_policy: getPeriodEditPolicy(period),
       scope: snapshot.scope || "personal",
       scope_label: snapshot.scope === "organization" ? "组织" : "个人",
       total_amount_yuan: totalAmountYuan,
@@ -282,8 +356,9 @@ function calculateOverBudgetAmount(remainingAmountYuan, expenseAmountYuan) {
 }
 
 function getExpenseRecords(period = getCurrentPeriod(), expenseTypeId = "all") {
+  const normalizedPeriod = normalizePeriod(period);
   const state = readBudgetState();
-  const records = getPeriodTransactions(state, period)
+  const records = getPeriodTransactions(state, normalizedPeriod)
     .map(normalizeTransaction)
     .filter((item) => item.type === "expense")
     .filter((item) => expenseTypeId === "all" || item.expense_type_id === expenseTypeId)
@@ -521,42 +596,47 @@ function buildAnalyticsState(snapshot = {}) {
 
 function loadAnalytics(period = getCurrentPeriod()) {
   const state = readBudgetState();
-  return Promise.resolve(buildAnalyticsState(getBudgetSnapshot(state, period)));
+  return Promise.resolve(buildAnalyticsState(getBudgetSnapshot(state, normalizePeriod(period))));
 }
+
 function loadDashboard(period = getCurrentPeriod()) {
   const state = readBudgetState();
-  return Promise.resolve(buildDashboardState(getBudgetSnapshot(state, period)));
+  return Promise.resolve(buildDashboardState(getBudgetSnapshot(state, normalizePeriod(period))));
 }
 
 function saveBudgetAmount(amountYuan, period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  assertPeriodEditable(normalizedPeriod);
   const budgetAmount = normalizeBudgetAmountUpdate(amountYuan);
   const state = readBudgetState();
-  const existingBudget = state.budgets[period] || {};
+  const existingBudget = state.budgets[normalizedPeriod] || {};
   const now = new Date().toISOString();
 
-  state.budgets[period] = {
+  state.budgets[normalizedPeriod] = {
     id: existingBudget.id || createId("budget"),
     scope: "personal",
-    period,
+    period: normalizedPeriod,
     total_amount_yuan: budgetAmount.total_amount_yuan,
     created_at: existingBudget.created_at || now,
     updated_at: now,
   };
 
   const nextState = writeBudgetState(state);
-  return Promise.resolve(buildDashboardState(getBudgetSnapshot(nextState, period)));
+  return Promise.resolve(buildDashboardState(getBudgetSnapshot(nextState, normalizedPeriod)));
 }
 
 function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  assertPeriodEditable(normalizedPeriod);
   const state = readBudgetState();
-  const budget = state.budgets[period];
+  const budget = state.budgets[normalizedPeriod];
 
   if (!budget || !budget.total_amount_yuan) {
     throw new Error("请到我的页面设置本月总预算");
   }
 
   const amountYuan = normalizeAmountYuan(expenseDraft.amount_yuan);
-  const dashboardBefore = buildDashboardState(getBudgetSnapshot(state, period));
+  const dashboardBefore = buildDashboardState(getBudgetSnapshot(state, normalizedPeriod));
   const overBudgetAmountYuan = calculateOverBudgetAmount(dashboardBefore.summary.remaining_amount_yuan, amountYuan);
 
   if (compareAmountYuan(overBudgetAmountYuan, "0.00") > 0) {
@@ -566,14 +646,14 @@ function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
   const now = new Date().toISOString();
   const record = {
     id: createId("expense"),
-    period,
+    period: normalizedPeriod,
     type: "expense",
     title: expenseDraft.remark || expenseDraft.expense_type_name || "消费",
     expense_type_id: expenseDraft.expense_type_id,
     expense_type_name: expenseDraft.expense_type_name,
     amount_yuan: amountYuan,
     remark: expenseDraft.remark || "",
-    occurred_at: expenseDraft.occurred_at || getLocalDateString(),
+    occurred_at: expenseDraft.occurred_at || getDefaultOccurredDateForPeriod(normalizedPeriod),
     created_at: now,
     updated_at: now,
   };
@@ -597,7 +677,7 @@ function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
   return Promise.resolve({
     success: true,
     data: record,
-    dashboard: buildDashboardState(getBudgetSnapshot(nextState, period)),
+    dashboard: buildDashboardState(getBudgetSnapshot(nextState, normalizedPeriod)),
   });
 }
 
@@ -606,10 +686,16 @@ module.exports = {
   createEmptyDashboardState,
   getCurrentPeriod,
   getExpenseRecords,
+  getLastDateOfPeriod,
+  getPeriodEditPolicy,
+  getPeriodLabel,
+  getSelectedViewPeriod,
   loadAnalytics,
   loadDashboard,
+  loadSelectedViewPeriod,
   normalizeBudgetAmountUpdate,
   readBudgetState,
   saveBudgetAmount,
   saveExpenseRecord,
+  saveSelectedViewPeriod,
 };

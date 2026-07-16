@@ -1,3 +1,4 @@
+const { getCurrentPeriod, getLastDateOfPeriod } = require("./budgetService");
 const { normalizeAmountYuan } = require("../utils/money");
 
 const EXPENSE_TYPES = [
@@ -93,13 +94,17 @@ function getLocalDateString(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function createExpenseRecordDraft(formData, expenseTypes = EXPENSE_TYPES) {
+function getExpenseDateForPeriod(period = getCurrentPeriod()) {
+  return period === getCurrentPeriod() ? getLocalDateString() : getLastDateOfPeriod(period);
+}
+
+function createExpenseRecordDraft(formData, expenseTypes = EXPENSE_TYPES, period = getCurrentPeriod()) {
   const draft = buildExpenseDraft(formData, expenseTypes);
   return Promise.resolve({
     success: true,
     data: {
       ...draft,
-      occurred_at: getLocalDateString(),
+      occurred_at: getExpenseDateForPeriod(period),
     },
   });
 }

@@ -376,3 +376,17 @@ page {
   background: #13795b;
   color: #ffffff;
 }
+
+.readonly-hint {
+  margin-top: 16rpx;
+  border-radius: 12rpx;
+  padding: 16rpx 18rpx;
+  background: #fff7ed;
+  color: #9a5b00;
+  font-size: 24rpx;
+  line-height: 34rpx;
+}
+
+.budget-input[disabled] {
+  color: #7a867d;
+}

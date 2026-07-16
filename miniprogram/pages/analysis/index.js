@@ -1,10 +1,15 @@
-const { getCurrentPeriod, loadAnalytics } = require("../../services/budgetService");
+const {
+  getCurrentPeriod,
+  loadAnalytics,
+  loadSelectedViewPeriod,
+} = require("../../services/budgetService");
 
 Page({
   data: {
     status: "loading",
     period: getCurrentPeriod(),
     periodLabel: getCurrentPeriod(),
+    periodEditPolicy: {},
     analytics: null,
     errorMessage: "",
   },
@@ -25,12 +30,15 @@ Page({
       errorMessage: "",
     });
 
-    return loadAnalytics(this.data.period)
-      .then((analytics) => {
+    return loadSelectedViewPeriod()
+      .then((viewPeriod) => loadAnalytics(viewPeriod.period).then((analytics) => ({ viewPeriod, analytics })))
+      .then(({ viewPeriod, analytics }) => {
         this.setData({
           status: analytics.has_budget || analytics.has_records ? "success" : "empty",
-          analytics,
+          period: viewPeriod.period,
           periodLabel: analytics.period_label,
+          periodEditPolicy: viewPeriod.edit_policy,
+          analytics,
         });
       })
       .catch((error) => {

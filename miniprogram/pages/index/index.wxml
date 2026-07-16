@@ -64,6 +64,8 @@
       </view>
     </view>
 
+    <view class="readonly-note" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
+
     <view class="quick-actions">
       <button class="primary-button" bindtap="onAddExpense">记一笔支出</button>
     </view>

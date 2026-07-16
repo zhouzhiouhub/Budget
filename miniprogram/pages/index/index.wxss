@@ -209,6 +209,16 @@ page {
   background: #e11d48;
 }
 
+.readonly-note {
+  margin-top: 18rpx;
+  border-radius: 12rpx;
+  padding: 16rpx 18rpx;
+  background: #fff7ed;
+  color: #9a5b00;
+  font-size: 24rpx;
+  line-height: 34rpx;
+}
+
 .quick-actions {
   gap: 20rpx;
   margin-top: 24rpx;

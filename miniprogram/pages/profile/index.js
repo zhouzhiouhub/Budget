@@ -2,8 +2,10 @@ const {
   createEmptyDashboardState,
   getCurrentPeriod,
   loadDashboard,
+  loadSelectedViewPeriod,
   normalizeBudgetAmountUpdate,
   saveBudgetAmount,
+  saveSelectedViewPeriod,
 } = require("../../services/budgetService");
 const {
   createDefaultUserProfile,
@@ -45,10 +47,9 @@ Page({
       errorMessage: "",
     });
 
-    const selectedBudgetPeriod = this.data.selectedBudgetPeriod || getCurrentPeriod();
-
-    return Promise.all([loadDashboard(selectedBudgetPeriod), loadUserProfile()])
-      .then(([dashboard, userProfile]) => {
+    return Promise.all([loadSelectedViewPeriod(), loadUserProfile()])
+      .then(([viewPeriod, userProfile]) => loadDashboard(viewPeriod.period).then((dashboard) => ({ dashboard, userProfile })))
+      .then(({ dashboard, userProfile }) => {
         this.setData({
           status: "success",
           summary: dashboard.summary,
@@ -192,7 +193,8 @@ Page({
       budgetEditorStatus: "loading",
     });
 
-    loadDashboard(selectedBudgetPeriod)
+    saveSelectedViewPeriod(selectedBudgetPeriod)
+      .then((viewPeriod) => loadDashboard(viewPeriod.period))
       .then((dashboard) => {
         this.setData({
           summary: dashboard.summary,
@@ -218,6 +220,15 @@ Page({
   },
 
   onSaveBudgetAmount() {
+    const editPolicy = (this.data.summary && this.data.summary.period_edit_policy) || {};
+    if (editPolicy.is_readonly) {
+      this.setData({
+        budgetEditorStatus: "error",
+        budgetEditorError: editPolicy.readonly_text || "当前月份只能查看",
+      });
+      return;
+    }
+
     this.setData({
       budgetEditorStatus: "saving",
       budgetEditorError: "",

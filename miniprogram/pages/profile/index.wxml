@@ -54,15 +54,17 @@
               value="{{budgetAmountInput}}"
               placeholder="0.00"
               bindinput="onBudgetAmountInput"
+              disabled="{{summary.period_edit_policy.is_readonly || budgetEditorStatus === 'saving' || budgetEditorStatus === 'loading'}}"
             />
           </view>
         </view>
       </view>
+      <view class="readonly-hint" wx:if="{{summary.period_edit_policy.is_readonly}}">{{summary.period_edit_policy.readonly_text}}</view>
       <view class="editor-error" wx:if="{{budgetEditorError}}">{{budgetEditorError}}</view>
       <button
         class="save-button"
         loading="{{budgetEditorStatus === 'saving'}}"
-        disabled="{{budgetEditorStatus === 'saving' || budgetEditorStatus === 'loading'}}"
+        disabled="{{summary.period_edit_policy.is_readonly || budgetEditorStatus === 'saving' || budgetEditorStatus === 'loading'}}"
         bindtap="onSaveBudgetAmount"
       >保存预算</button>
     </view>

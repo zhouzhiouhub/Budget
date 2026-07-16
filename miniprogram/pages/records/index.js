@@ -1,4 +1,8 @@
-const { getCurrentPeriod, getExpenseRecords } = require("../../services/budgetService");
+const {
+  getCurrentPeriod,
+  getExpenseRecords,
+  loadSelectedViewPeriod,
+} = require("../../services/budgetService");
 const { addAmountYuan } = require("../../utils/money");
 const { EXPENSE_TYPES } = require("../../services/expenseFormService");
 
@@ -15,6 +19,8 @@ Page({
   data: {
     status: "loading",
     period: getCurrentPeriod(),
+    periodLabel: getCurrentPeriod(),
+    periodEditPolicy: {},
     filters: [ALL_FILTER].concat(EXPENSE_TYPES.map((item) => ({ id: item.id, name: item.name }))),
     selectedTypeId: "all",
     records: [],
@@ -42,10 +48,14 @@ Page({
       totalAmountDisplay: "0.00 元",
     });
 
-    return getExpenseRecords(this.data.period, typeId)
-      .then((records) => {
+    return loadSelectedViewPeriod()
+      .then((viewPeriod) => getExpenseRecords(viewPeriod.period, typeId).then((records) => ({ viewPeriod, records })))
+      .then(({ viewPeriod, records }) => {
         this.setData({
           status: records.length ? "success" : "empty",
+          period: viewPeriod.period,
+          periodLabel: viewPeriod.period_label,
+          periodEditPolicy: viewPeriod.edit_policy,
           records,
           totalAmountDisplay: buildTotalAmountDisplay(records),
         });
