@@ -40,5 +40,9 @@
       </view>
       <view class="record-amount">{{item.amountLabel}}</view>
     </view>
+    <view class="record-total">
+      <view class="record-total-label">合计支出</view>
+      <view class="record-total-value">-{{totalAmountDisplay}}</view>
+    </view>
   </view>
 </view>

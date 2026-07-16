@@ -4,7 +4,8 @@ page {
 
 .page-shell {
   min-height: 100vh;
-  padding: 40rpx 32rpx 56rpx;
+  padding: 40rpx 32rpx 180rpx;
+  padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
 
 .page-header {
@@ -60,7 +61,8 @@ page {
 }
 
 .state-panel,
-.record-item {
+.record-item,
+.record-total {
   border: 1rpx solid rgba(31, 41, 51, 0.08);
   border-radius: 16rpx;
   background: #ffffff;
@@ -95,7 +97,8 @@ page {
   gap: 16rpx;
 }
 
-.record-item {
+.record-item,
+.record-total {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -132,4 +135,29 @@ page {
   color: #be123c;
   font-size: 28rpx;
   font-weight: 700;
+}
+.record-total {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: 24rpx;
+  bottom: calc(24rpx + env(safe-area-inset-bottom));
+  z-index: 10;
+  min-height: 96rpx;
+  box-shadow: 0 16rpx 40rpx rgba(41, 54, 46, 0.14);
+}
+
+.record-total-label {
+  color: #405148;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+}
+
+.record-total-value {
+  flex-shrink: 0;
+  color: #be123c;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 40rpx;
 }
