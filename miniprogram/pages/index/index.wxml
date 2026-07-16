@@ -30,8 +30,7 @@
   <block wx:elif="{{status === 'empty'}}">
     <view class="state-panel">
       <view class="state-title">暂无预算</view>
-      <view class="state-text">本月还没有设置总预算</view>
-      <button class="primary-button" bindtap="onCreateBudget">设置总预算</button>
+      <view class="state-text">本月还没有设置总预算，可在我的页面完成设置。</view>
     </view>
   </block>
 
@@ -67,7 +66,6 @@
 
     <view class="quick-actions">
       <button class="primary-button" bindtap="onAddExpense">记一笔支出</button>
-      <button class="secondary-button" bindtap="onCreateBudget">调整总预算</button>
     </view>
 
     <view class="section-row transaction-title">
@@ -100,34 +98,6 @@
       <button class="side-menu-item" bindtap="onViewRecords">消费</button>
       <button class="side-menu-item" bindtap="onViewAnalytics">分析</button>
       <button class="side-menu-item" bindtap="onViewProfile">我的</button>
-    </view>
-  </view>
-
-  <view class="modal-mask" wx:if="{{showBudgetEditor}}">
-    <view class="budget-editor">
-      <view class="modal-title">总预算金额</view>
-      <view class="modal-desc">设置本月唯一总预算，消费会从这里扣减。</view>
-      <view class="budget-input-row">
-        <text class="currency">¥</text>
-        <input
-          class="budget-input"
-          type="digit"
-          value="{{budgetAmountInput}}"
-          placeholder="请输入金额"
-          focus="{{showBudgetEditor}}"
-          bindinput="onBudgetAmountInput"
-        />
-      </view>
-      <view class="editor-error" wx:if="{{budgetEditorError}}">{{budgetEditorError}}</view>
-      <view class="modal-actions">
-        <button class="modal-button ghost" bindtap="onCancelBudgetEdit">取消</button>
-        <button
-          class="modal-button primary"
-          loading="{{budgetEditorStatus === 'saving'}}"
-          disabled="{{budgetEditorStatus === 'saving'}}"
-          bindtap="onSaveBudgetAmount"
-        >保存</button>
-      </view>
     </view>
   </view>
 </view>

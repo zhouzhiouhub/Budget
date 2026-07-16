@@ -506,7 +506,7 @@ function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
   const budget = state.budgets[period];
 
   if (!budget || !budget.total_amount_yuan) {
-    throw new Error("请先设置本月总预算");
+    throw new Error("请到我的页面设置本月总预算");
   }
 
   const amountYuan = normalizeAmountYuan(expenseDraft.amount_yuan);
@@ -514,7 +514,7 @@ function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
   const overBudgetAmountYuan = calculateOverBudgetAmount(dashboardBefore.summary.remaining_amount_yuan, amountYuan);
 
   if (compareAmountYuan(overBudgetAmountYuan, "0.00") > 0) {
-    throw new Error(`本次消费将超出预算 ${overBudgetAmountYuan} 元，请先调整总预算`);
+    throw new Error(`本次消费将超出预算 ${overBudgetAmountYuan} 元，请到我的页面调整总预算`);
   }
 
   const now = new Date().toISOString();
