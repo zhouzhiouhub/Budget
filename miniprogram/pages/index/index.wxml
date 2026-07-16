@@ -98,7 +98,7 @@
     <view class="side-menu-list">
       <button class="side-menu-item active" bindtap="onCloseSideMenu">首页</button>
       <button class="side-menu-item" bindtap="onViewRecords">消费记录</button>
-      <button class="side-menu-item pending" data-title="分析" bindtap="onTodoMenuItem">分析</button>
+      <button class="side-menu-item" bindtap="onViewAnalytics">分析</button>
       <button class="side-menu-item pending" data-title="我的" bindtap="onTodoMenuItem">我的</button>
     </view>
   </view>

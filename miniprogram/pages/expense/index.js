@@ -67,7 +67,7 @@ Page({
       .then(() => {
         this.setData({
           status: "success",
-          successMessage: "消费记录已保存",
+          successMessage: "消费已保存",
         });
         wx.showToast({
           title: "已保存",
@@ -79,7 +79,7 @@ Page({
       .catch((error) => {
         this.setData({
           status: "error",
-          errorMessage: error.message || "消费记录保存失败",
+          errorMessage: error.message || "消费保存失败",
         });
       });
   },

@@ -53,7 +53,7 @@ Page({
       .catch((error) => {
         this.setData({
           status: "error",
-          errorMessage: error.message || "消费记录加载失败",
+          errorMessage: error.message || "消费加载失败",
         });
       });
   },

@@ -144,6 +144,15 @@ Page({
     });
   },
 
+  onViewAnalytics() {
+    this.setData({
+      showSideMenu: false,
+    });
+    wx.navigateTo({
+      url: "/pages/analysis/index",
+    });
+  },
+
   onTodoMenuItem(event) {
     const title = event.currentTarget.dataset.title || "该功能";
     wx.showToast({

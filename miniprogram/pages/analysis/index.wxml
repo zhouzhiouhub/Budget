@@ -1,0 +1,83 @@
+<view class="page-shell">
+  <view class="page-header">
+    <view class="eyebrow">{{periodLabel}}</view>
+    <view class="page-title">预算分析</view>
+  </view>
+
+  <view class="state-panel" wx:if="{{status === 'loading'}}">
+    <view class="state-title">加载中</view>
+    <view class="state-text">正在整理本月预算和消费趋势</view>
+  </view>
+
+  <view class="state-panel error" wx:elif="{{status === 'error'}}">
+    <view class="state-title">加载失败</view>
+    <view class="state-text">{{errorMessage}}</view>
+    <button class="retry-button" bindtap="refreshAnalytics">重试</button>
+  </view>
+
+  <view class="state-panel" wx:elif="{{status === 'empty'}}">
+    <view class="state-title">暂无分析数据</view>
+    <view class="state-text">设置预算并记录消费后，这里会展示分类排行、趋势和预算建议。</view>
+  </view>
+
+  <block wx:else>
+    <view class="summary-card {{analytics.summary.statusClass}}">
+      <view class="summary-head">
+        <view>
+          <view class="summary-label">预算使用率</view>
+          <view class="summary-amount">{{analytics.summary.usedRateText}}</view>
+        </view>
+        <view class="status-badge">{{analytics.summary.statusText}}</view>
+      </view>
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{analytics.summary.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="metric-grid">
+      <view class="metric-card" wx:for="{{analytics.metrics}}" wx:key="id">
+        <view class="metric-label">{{item.label}}</view>
+        <view class="metric-value">{{item.value}}</view>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <view class="section-title">分类排行</view>
+      <view class="section-note">按支出金额排序</view>
+    </view>
+    <view class="empty-panel" wx:if="{{analytics.categoryRanking.length === 0}}">暂无分类支出</view>
+    <view class="ranking-list" wx:else>
+      <view class="ranking-item" wx:for="{{analytics.categoryRanking}}" wx:key="id">
+        <view class="ranking-row">
+          <view>
+            <view class="ranking-name">{{item.name}}</view>
+            <view class="ranking-meta">{{item.countText}} · {{item.percentText}}</view>
+          </view>
+          <view class="ranking-amount">{{item.amountDisplay}}</view>
+        </view>
+        <view class="mini-track">
+          <view class="mini-fill" style="width: {{item.progressPercent}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-head">
+      <view class="section-title">近 7 日趋势</view>
+      <view class="section-note">按发生日期统计</view>
+    </view>
+    <view class="trend-card">
+      <view class="trend-item" wx:for="{{analytics.dailyTrend}}" wx:key="date">
+        <view class="trend-label">{{item.label}}</view>
+        <view class="trend-bar-wrap">
+          <view class="trend-bar" style="height: {{item.barPercent}}%;"></view>
+        </view>
+        <view class="trend-amount">{{item.amount_yuan}}</view>
+      </view>
+    </view>
+
+    <view class="insight-card">
+      <view class="insight-title">{{analytics.insight.title}}</view>
+      <view class="insight-text">{{analytics.insight.text}}</view>
+    </view>
+  </block>
+</view>

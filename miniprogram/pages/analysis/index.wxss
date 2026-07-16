@@ -1,0 +1,312 @@
+page {
+  background: #f5f7f3;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 40rpx 32rpx 56rpx;
+}
+
+.page-header {
+  margin-bottom: 28rpx;
+}
+
+.eyebrow {
+  color: #617064;
+  font-size: 24rpx;
+  line-height: 32rpx;
+}
+
+.page-title {
+  margin-top: 8rpx;
+  color: #17221b;
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 56rpx;
+}
+
+.state-panel,
+.summary-card,
+.metric-card,
+.ranking-item,
+.trend-card,
+.insight-card,
+.empty-panel {
+  border: 1rpx solid rgba(31, 41, 51, 0.08);
+  border-radius: 16rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 28rpx rgba(41, 54, 46, 0.07);
+}
+
+.state-panel {
+  padding: 44rpx 32rpx;
+}
+
+.state-panel.error {
+  border-color: rgba(190, 18, 60, 0.2);
+}
+
+.state-title {
+  color: #17221b;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 42rpx;
+}
+
+.state-text {
+  margin-top: 10rpx;
+  color: #617064;
+  font-size: 26rpx;
+  line-height: 36rpx;
+}
+
+.retry-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180rpx;
+  height: 72rpx;
+  margin: 28rpx 0 0;
+  border: 0;
+  border-radius: 12rpx;
+  background: #13795b;
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.retry-button::after {
+  border: 0;
+}
+
+.summary-card {
+  padding: 32rpx;
+}
+
+.summary-head,
+.ranking-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.summary-label {
+  color: #617064;
+  font-size: 26rpx;
+  line-height: 36rpx;
+}
+
+.summary-amount {
+  margin-top: 8rpx;
+  color: #17221b;
+  font-size: 52rpx;
+  font-weight: 700;
+  line-height: 64rpx;
+}
+
+.status-badge {
+  flex-shrink: 0;
+  border-radius: 999rpx;
+  padding: 8rpx 18rpx;
+  background: #e7eee9;
+  color: #13795b;
+  font-size: 24rpx;
+  line-height: 32rpx;
+}
+
+.summary-card.warning .status-badge {
+  background: #fff3cf;
+  color: #9a5b00;
+}
+
+.summary-card.over-budget .status-badge {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.progress-track,
+.mini-track {
+  overflow: hidden;
+  border-radius: 999rpx;
+  background: #e8ece6;
+}
+
+.progress-track {
+  height: 16rpx;
+  margin-top: 24rpx;
+}
+
+.progress-fill,
+.mini-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: #13795b;
+}
+
+.summary-card.warning .progress-fill {
+  background: #d97706;
+}
+
+.summary-card.over-budget .progress-fill {
+  background: #e11d48;
+}
+
+.metric-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.metric-card {
+  width: calc((100% - 16rpx) / 2);
+  min-height: 132rpx;
+  padding: 22rpx;
+}
+
+.metric-label,
+.ranking-meta,
+.section-note,
+.trend-amount,
+.insight-text {
+  color: #617064;
+  font-size: 24rpx;
+  line-height: 32rpx;
+}
+
+.metric-value {
+  margin-top: 10rpx;
+  color: #17221b;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 40rpx;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-top: 36rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  color: #17221b;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 42rpx;
+}
+
+.empty-panel {
+  padding: 28rpx;
+  color: #617064;
+  font-size: 26rpx;
+  line-height: 36rpx;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.ranking-item {
+  padding: 24rpx;
+}
+
+.ranking-name {
+  color: #17221b;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+}
+
+.ranking-meta {
+  margin-top: 6rpx;
+}
+
+.ranking-amount {
+  flex-shrink: 0;
+  color: #be123c;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+}
+
+.mini-track {
+  height: 12rpx;
+  margin-top: 18rpx;
+}
+
+.trend-card {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10rpx;
+  height: 280rpx;
+  padding: 28rpx 20rpx 22rpx;
+}
+
+.trend-item {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.trend-label {
+  order: 3;
+  margin-top: 10rpx;
+  color: #617064;
+  font-size: 22rpx;
+  line-height: 28rpx;
+}
+
+.trend-bar-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 28rpx;
+  height: 150rpx;
+  border-radius: 999rpx;
+  background: #e8ece6;
+  overflow: hidden;
+}
+
+.trend-bar {
+  width: 100%;
+  border-radius: 999rpx 999rpx 0 0;
+  background: #13795b;
+}
+
+.trend-amount {
+  margin-bottom: 10rpx;
+  font-size: 20rpx;
+  line-height: 26rpx;
+}
+
+.insight-card {
+  margin-top: 28rpx;
+  padding: 28rpx;
+  background: #eef6f1;
+}
+
+.insight-title {
+  color: #17221b;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 40rpx;
+}
+
+.insight-text {
+  margin-top: 10rpx;
+  color: #405148;
+  font-size: 26rpx;
+  line-height: 38rpx;
+}

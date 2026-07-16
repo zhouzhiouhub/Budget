@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/expense/index",
     "pages/records/index",
+    "pages/analysis/index",
     "pages/example/index"
   ],
   "window": {

@@ -18,7 +18,7 @@
 
   <view class="state-panel" wx:if="{{status === 'loading'}}">
     <view class="state-title">加载中</view>
-    <view class="state-text">正在读取消费记录</view>
+    <view class="state-text">正在读取消费</view>
   </view>
 
   <view class="state-panel error" wx:elif="{{status === 'error'}}">
@@ -28,7 +28,7 @@
 
   <view class="state-panel" wx:elif="{{status === 'empty'}}">
     <view class="state-title">暂无记录</view>
-    <view class="state-text">当前类型还没有消费记录</view>
+    <view class="state-text">当前类型还没有消费</view>
   </view>
 
   <view class="record-list" wx:else>
