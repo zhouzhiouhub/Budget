@@ -76,7 +76,7 @@
     </view>
 
     <view class="transaction-list">
-      <view class="transaction-item" wx:for="{{transactions}}" wx:key="id">
+      <view class="transaction-item {{deletingRecordId === item.id ? 'removing' : ''}}" wx:for="{{transactions}}" wx:key="id" data-id="{{item.id}}" bindlongpress="onLongPressTransaction">
         <view>
           <view class="transaction-name">{{item.title}}</view>
           <view class="transaction-meta">{{item.metaText}}</view>

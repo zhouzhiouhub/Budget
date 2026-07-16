@@ -2,6 +2,7 @@ const {
   createEmptyDashboardState,
   loadDashboard,
   loadSelectedViewPeriod,
+  removeExpenseRecord,
 } = require("../../services/budgetService");
 
 const initialSummary = createEmptyDashboardState().summary;
@@ -15,6 +16,7 @@ Page({
     showSideMenu: false,
     viewPeriod: initialSummary.period,
     periodEditPolicy: initialSummary.period_edit_policy,
+    deletingRecordId: "",
   },
 
   onShow() {
@@ -90,6 +92,64 @@ Page({
     wx.navigateTo({
       url: "/pages/expense/index",
     });
+  },
+
+  onLongPressTransaction(event) {
+    const recordId = event.currentTarget.dataset.id;
+    const editPolicy = this.data.periodEditPolicy || {};
+    const record = this.data.transactions.find((item) => item.id === recordId);
+
+    if (!record) {
+      return;
+    }
+
+    if (editPolicy.is_readonly) {
+      wx.showToast({
+        title: editPolicy.readonly_text || "当前月份只能查看",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "移除订单",
+      content: `移除后该笔花费不再记录，${record.amount_yuan} 元会返回预算。`,
+      confirmText: "移除",
+      confirmColor: "#be123c",
+      success: (result) => {
+        if (result.confirm) {
+          this.removeTransaction(recordId);
+        }
+      },
+    });
+  },
+
+  removeTransaction(recordId) {
+    this.setData({
+      deletingRecordId: recordId,
+      errorMessage: "",
+    });
+
+    return Promise.resolve()
+      .then(() => removeExpenseRecord(recordId, this.data.viewPeriod))
+      .then(() => {
+        wx.showToast({
+          title: "已移除",
+          icon: "success",
+        });
+        return this.refreshDashboard();
+      })
+      .catch((error) => {
+        wx.showToast({
+          title: error.message || "订单移除失败",
+          icon: "none",
+        });
+      })
+      .finally(() => {
+        this.setData({
+          deletingRecordId: "",
+        });
+      });
   },
 
   onViewAnalytics() {

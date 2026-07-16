@@ -177,3 +177,7 @@ page {
   font-weight: 700;
   line-height: 40rpx;
 }
+
+.record-item.removing {
+  opacity: 0.55;
+}

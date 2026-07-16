@@ -686,6 +686,49 @@ function saveExpenseRecord(expenseDraft, period = getCurrentPeriod()) {
   });
 }
 
+function removeExpenseRecord(recordId, period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  assertPeriodEditable(normalizedPeriod);
+
+  const state = readBudgetState();
+  const recordIndex = state.transactions.findIndex((item) => (
+    item.id === recordId
+    && item.period === normalizedPeriod
+    && item.type === "expense"
+  ));
+
+  if (recordIndex < 0) {
+    throw new Error("未找到要移除的消费记录");
+  }
+
+  const budget = state.budgets[normalizedPeriod];
+  const record = state.transactions[recordIndex];
+  const amountYuan = normalizeAmountYuan(record.amount_yuan);
+  const dashboardBefore = buildDashboardState(getBudgetSnapshot(state, normalizedPeriod));
+  const afterUsedAmountYuan = subtractAmountYuan(dashboardBefore.summary.used_amount_yuan, amountYuan);
+  const now = new Date().toISOString();
+
+  state.transactions.splice(recordIndex, 1);
+  state.mutations.push({
+    id: createId("mutation"),
+    budget_period_id: budget ? budget.id : "",
+    expense_record_id: record.id,
+    mutation_type: "expense_removed",
+    amount_yuan: amountYuan,
+    returned_amount_yuan: amountYuan,
+    before_used_amount_yuan: dashboardBefore.summary.used_amount_yuan,
+    after_used_amount_yuan: afterUsedAmountYuan,
+    created_at: now,
+  });
+
+  const nextState = writeBudgetState(state);
+
+  return Promise.resolve({
+    success: true,
+    data: normalizeTransaction(record),
+    dashboard: buildDashboardState(getBudgetSnapshot(nextState, normalizedPeriod)),
+  });
+}
 module.exports = {
   buildDashboardState,
   createEmptyDashboardState,
@@ -700,6 +743,7 @@ module.exports = {
   loadSelectedViewPeriod,
   normalizeBudgetAmountUpdate,
   readBudgetState,
+  removeExpenseRecord,
   saveBudgetAmount,
   saveExpenseRecord,
   saveSelectedViewPeriod,

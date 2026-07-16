@@ -2,6 +2,7 @@ const {
   getCurrentPeriod,
   getExpenseRecords,
   loadSelectedViewPeriod,
+  removeExpenseRecord,
 } = require("../../services/budgetService");
 const { addAmountYuan } = require("../../utils/money");
 const { EXPENSE_TYPES } = require("../../services/expenseFormService");
@@ -25,6 +26,7 @@ Page({
     selectedTypeId: "all",
     records: [],
     totalAmountDisplay: "0.00 元",
+    deletingRecordId: "",
     errorMessage: "",
   },
 
@@ -38,6 +40,68 @@ Page({
       selectedTypeId: id,
     });
     this.loadRecords(id);
+  },
+
+  onLongPressRecord(event) {
+    const recordId = event.currentTarget.dataset.id;
+    const editPolicy = this.data.periodEditPolicy || {};
+    const record = this.data.records.find((item) => item.id === recordId);
+
+    if (!record) {
+      return;
+    }
+
+    if (editPolicy.is_readonly) {
+      wx.showToast({
+        title: editPolicy.readonly_text || "当前月份只能查看",
+        icon: "none",
+      });
+      return;
+    }
+
+    wx.showModal({
+      title: "移除订单",
+      content: `移除后该笔花费不再记录，${record.amount_yuan} 元会返回预算。`,
+      confirmText: "移除",
+      confirmColor: "#be123c",
+      success: (result) => {
+        if (result.confirm) {
+          this.removeRecord(recordId);
+        }
+      },
+    });
+  },
+
+  removeRecord(recordId) {
+    this.setData({
+      deletingRecordId: recordId,
+      errorMessage: "",
+    });
+
+    return Promise.resolve()
+      .then(() => removeExpenseRecord(recordId, this.data.period))
+      .then(() => {
+        wx.showToast({
+          title: "已移除",
+          icon: "success",
+        });
+        return this.loadRecords();
+      })
+      .catch((error) => {
+        const message = error.message || "订单移除失败";
+        this.setData({
+          errorMessage: message,
+        });
+        wx.showToast({
+          title: message,
+          icon: "none",
+        });
+      })
+      .finally(() => {
+        this.setData({
+          deletingRecordId: "",
+        });
+      });
   },
 
   loadRecords(typeId = this.data.selectedTypeId) {

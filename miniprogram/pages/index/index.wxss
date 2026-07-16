@@ -266,6 +266,10 @@ page {
   margin-bottom: 16rpx;
 }
 
+.transaction-item.removing {
+  opacity: 0.55;
+}
+
 .transaction-name {
   color: #17221b;
   font-size: 28rpx;
