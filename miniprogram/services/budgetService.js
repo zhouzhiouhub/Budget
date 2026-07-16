@@ -29,6 +29,34 @@ function getPeriodLabel(period) {
   return `${parts[0]}年${Number(parts[1])}月`;
 }
 
+function getLocalTimeString(date = new Date()) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function parseDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatTransactionDateTime(occurredAt, createdAt) {
+  const dateText = String(occurredAt || "").trim();
+  const createdDate = parseDate(createdAt);
+
+  if (!createdDate) {
+    return dateText;
+  }
+
+  const displayDate = dateText || getLocalDateString(createdDate);
+  return `${displayDate} ${getLocalTimeString(createdDate)}`;
+}
+
 function createId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
 }
@@ -99,6 +127,7 @@ function getRemainingDisplay(amountYuan) {
 function normalizeTransaction(transaction) {
   const amountYuan = normalizeAmountYuan(transaction.amount_yuan);
   const expenseTypeName = transaction.expense_type_name || "未分类";
+  const occurredAtDisplay = formatTransactionDateTime(transaction.occurred_at, transaction.created_at);
 
   return {
     id: transaction.id,
@@ -111,9 +140,10 @@ function normalizeTransaction(transaction) {
     remark: transaction.remark || "",
     amountLabel: transaction.type === "expense" ? `-${amountYuan} 元` : `${amountYuan} 元`,
     occurred_at: transaction.occurred_at,
+    occurred_at_display: occurredAtDisplay,
     created_at: transaction.created_at || "",
     updated_at: transaction.updated_at || "",
-    metaText: `${expenseTypeName} · ${transaction.occurred_at}`,
+    metaText: `${expenseTypeName} · ${occurredAtDisplay || transaction.occurred_at}`,
   };
 }
 

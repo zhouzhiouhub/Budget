@@ -36,7 +36,7 @@
     <view class="record-item" wx:for="{{records}}" wx:key="id">
       <view class="record-main">
         <view class="record-title">{{item.title}}</view>
-        <view class="record-meta">{{item.expense_type_name}} · {{item.occurred_at}}</view>
+        <view class="record-meta">{{item.expense_type_name}} · {{item.occurred_at_display}}</view>
         <view class="record-remark" wx:if="{{item.remark}}">{{item.remark}}</view>
       </view>
       <view class="record-amount">{{item.amountLabel}}</view>
