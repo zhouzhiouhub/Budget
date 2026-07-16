@@ -64,6 +64,18 @@ function sumExpenseAmountYuan(transactions) {
   return addAmountYuan(...expenseAmounts);
 }
 
+function normalizeBudgetAmountUpdate(amountYuan) {
+  const totalAmountYuan = normalizeAmountYuan(amountYuan);
+  if (compareAmountYuan(totalAmountYuan, "0.00") <= 0) {
+    throw new Error("总预算金额必须大于 0 元");
+  }
+
+  return {
+    total_amount_yuan: totalAmountYuan,
+    totalDisplay: `${totalAmountYuan} 元`,
+  };
+}
+
 function createEmptyDashboardState(period = getCurrentPeriod()) {
   return {
     summary: {
@@ -178,4 +190,5 @@ module.exports = {
   createEmptyDashboardState,
   getCurrentPeriod,
   loadDashboard,
+  normalizeBudgetAmountUpdate,
 };

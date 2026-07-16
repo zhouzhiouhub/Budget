@@ -81,7 +81,9 @@ page {
 .section-row,
 .transaction-item,
 .quick-actions,
-.budget-metrics {
+.budget-metrics,
+.modal-actions,
+.budget-input-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -244,4 +246,94 @@ page {
   color: #be123c;
   font-size: 28rpx;
   font-weight: 700;
+}
+
+.modal-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 32rpx;
+  background: rgba(23, 34, 27, 0.42);
+}
+
+.budget-editor {
+  width: 100%;
+  border-radius: 20rpx;
+  background: #ffffff;
+  padding: 32rpx;
+  box-shadow: 0 18rpx 48rpx rgba(23, 34, 27, 0.18);
+}
+
+.modal-title {
+  color: #17221b;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 44rpx;
+}
+
+.modal-desc {
+  margin-top: 10rpx;
+  color: #617064;
+  font-size: 26rpx;
+  line-height: 36rpx;
+}
+
+.budget-input-row {
+  min-height: 104rpx;
+  margin-top: 28rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid #c9d7ce;
+  border-radius: 14rpx;
+  background: #f8faf7;
+}
+
+.currency {
+  color: #13795b;
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-right: 16rpx;
+}
+
+.budget-input {
+  flex: 1;
+  color: #17221b;
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.editor-error {
+  margin-top: 16rpx;
+  color: #be123c;
+  font-size: 24rpx;
+  line-height: 34rpx;
+}
+
+.modal-actions {
+  gap: 18rpx;
+  margin-top: 30rpx;
+}
+
+.modal-button {
+  flex: 1;
+  height: 86rpx;
+  border-radius: 14rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.modal-button.ghost {
+  border: 1rpx solid #c9d7ce;
+  background: #ffffff;
+  color: #24624d;
+}
+
+.modal-button.primary {
+  background: #13795b;
+  color: #ffffff;
 }

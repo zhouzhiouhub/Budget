@@ -80,4 +80,32 @@
       </view>
     </view>
   </block>
+
+  <view class="modal-mask" wx:if="{{showBudgetEditor}}">
+    <view class="budget-editor">
+      <view class="modal-title">总预算金额</view>
+      <view class="modal-desc">设置本月唯一总预算，消费会从这里扣减。</view>
+      <view class="budget-input-row">
+        <text class="currency">¥</text>
+        <input
+          class="budget-input"
+          type="digit"
+          value="{{budgetAmountInput}}"
+          placeholder="请输入金额"
+          focus="{{showBudgetEditor}}"
+          bindinput="onBudgetAmountInput"
+        />
+      </view>
+      <view class="editor-error" wx:if="{{budgetEditorError}}">{{budgetEditorError}}</view>
+      <view class="modal-actions">
+        <button class="modal-button ghost" bindtap="onCancelBudgetEdit">取消</button>
+        <button
+          class="modal-button primary"
+          loading="{{budgetEditorStatus === 'saving'}}"
+          disabled="{{budgetEditorStatus === 'saving'}}"
+          bindtap="onSaveBudgetAmount"
+        >保存</button>
+      </view>
+    </view>
+  </view>
 </view>

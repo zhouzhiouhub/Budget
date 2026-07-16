@@ -1,6 +1,8 @@
 const {
+  buildDashboardState,
   createEmptyDashboardState,
   loadDashboard,
+  normalizeBudgetAmountUpdate,
 } = require("../../services/budgetService");
 
 Page({
@@ -9,6 +11,10 @@ Page({
     summary: createEmptyDashboardState().summary,
     transactions: [],
     errorMessage: "",
+    showBudgetEditor: false,
+    budgetAmountInput: "",
+    budgetEditorError: "",
+    budgetEditorStatus: "idle",
   },
 
   onLoad() {
@@ -44,10 +50,64 @@ Page({
   },
 
   onCreateBudget() {
-    wx.showToast({
-      title: "总预算创建待接入",
-      icon: "none",
+    this.setData({
+      showBudgetEditor: true,
+      budgetAmountInput: this.data.summary.has_budget ? this.data.summary.total_amount_yuan : "",
+      budgetEditorError: "",
+      budgetEditorStatus: "idle",
     });
+  },
+
+  onBudgetAmountInput(event) {
+    this.setData({
+      budgetAmountInput: event.detail.value,
+      budgetEditorError: "",
+    });
+  },
+
+  onCancelBudgetEdit() {
+    this.setData({
+      showBudgetEditor: false,
+      budgetEditorError: "",
+      budgetEditorStatus: "idle",
+    });
+  },
+
+  onSaveBudgetAmount() {
+    this.setData({
+      budgetEditorStatus: "saving",
+      budgetEditorError: "",
+    });
+
+    try {
+      const budgetAmount = normalizeBudgetAmountUpdate(this.data.budgetAmountInput);
+      const dashboard = buildDashboardState({
+        period: this.data.summary.period,
+        scope: this.data.summary.scope,
+        total_amount_yuan: budgetAmount.total_amount_yuan,
+        used_amount_yuan: this.data.summary.used_amount_yuan,
+        transactions: this.data.transactions,
+      });
+
+      this.setData({
+        status: "success",
+        summary: dashboard.summary,
+        transactions: dashboard.transactions,
+        showBudgetEditor: false,
+        budgetAmountInput: "",
+        budgetEditorStatus: "idle",
+      });
+
+      wx.showToast({
+        title: "已更新总预算",
+        icon: "success",
+      });
+    } catch (error) {
+      this.setData({
+        budgetEditorStatus: "error",
+        budgetEditorError: error.message || "请输入有效金额",
+      });
+    }
   },
 
   onAddExpense() {
