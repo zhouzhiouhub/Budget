@@ -94,16 +94,4 @@ Page({
         });
       });
   },
-
-  onViewRecords() {
-    wx.navigateTo({
-      url: "/pages/records/index",
-    });
-  },
-
-  onViewAnalytics() {
-    wx.navigateTo({
-      url: "/pages/analysis/index",
-    });
-  },
 });
