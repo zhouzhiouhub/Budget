@@ -1,0 +1,76 @@
+﻿# Dependencies
+node_modules/
+**/node_modules/
+
+# Package-manager caches
+.pnpm-store/
+.yarn/
+!.yarn/releases/
+!.yarn/plugins/
+!.yarn/sdks/
+!.yarn/versions/
+
+# WeChat Mini Program generated output
+miniprogram/miniprogram_npm/
+miniprogram_npm/
+unpackage/
+dist/
+build/
+.output/
+.vite/
+
+# WeChat developer tool local/private files
+project.private.config.json
+*.private.config.json
+.idea/
+.vscode/
+
+# Cloud function generated logs
+cloudfunctions/**/npm-debug.log*
+cloudfunctions/**/yarn-debug.log*
+cloudfunctions/**/yarn-error.log*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.template
+*.local
+*.secret
+*.key
+*.pem
+
+# Test and coverage output
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+playwright-report/
+
+# TypeScript and lint caches
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+.cache/
+*.tmp
+*.bak
+*.swp
+*.swo

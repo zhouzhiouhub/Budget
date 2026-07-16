@@ -1,0 +1,7 @@
+﻿interface:
+  display_name: "预算管理小程序"
+  short_description: "预算管理小程序的项目级开发规范与领域规则"
+  default_prompt: "使用 $budget-management-miniapp 处理预算管理小程序仓库中的任务。"
+
+policy:
+  allow_implicit_invocation: true
