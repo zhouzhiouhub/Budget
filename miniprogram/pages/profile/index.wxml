@@ -1,16 +1,29 @@
 <view class="page-shell">
   <view class="profile-header">
-    <view class="avatar-mark">我</view>
+    <button
+      class="avatar-picker header-avatar"
+      open-type="chooseAvatar"
+      bindchooseavatar="onChooseAvatar"
+      loading="{{avatarEditorStatus === 'saving'}}"
+      disabled="{{avatarEditorStatus === 'saving'}}"
+      aria-label="更换头像"
+    >
+      <image wx:if="{{userProfile.avatar_url}}" class="avatar-image" src="{{userProfile.avatar_url}}" mode="aspectFill"></image>
+      <view wx:else class="avatar-mark">{{userProfile.avatar_text}}</view>
+    </button>
     <view class="profile-copy">
       <view class="eyebrow">BudgetFlow</view>
-      <view class="page-title">我的</view>
+      <view class="title-row">
+        <view class="page-title">{{userProfile.nickname}}</view>
+        <button class="edit-icon-button" aria-label="编辑昵称" bindtap="onOpenNicknameEditor">✎</button>
+      </view>
       <view class="profile-desc">个人预算与偏好设置</view>
     </view>
   </view>
 
   <view class="state-panel" wx:if="{{status === 'loading'}}">
     <view class="state-title">加载中</view>
-    <view class="state-text">正在读取个人预算信息</view>
+    <view class="state-text">正在读取个人资料和预算信息</view>
   </view>
 
   <view class="state-panel error" wx:elif="{{status === 'error'}}">
@@ -56,4 +69,28 @@
       </view>
     </view>
   </block>
+
+  <view class="modal-mask" wx:if="{{showNicknameEditor}}">
+    <view class="nickname-editor">
+      <view class="modal-title">修改昵称</view>
+      <input
+        class="nickname-input"
+        type="nickname"
+        value="{{nicknameEditorInput}}"
+        placeholder="请输入昵称"
+        focus="{{showNicknameEditor}}"
+        bindinput="onNicknameInput"
+      />
+      <view class="editor-error" wx:if="{{nicknameEditorError}}">{{nicknameEditorError}}</view>
+      <view class="modal-actions">
+        <button class="modal-button ghost" bindtap="onCancelNicknameEdit">取消</button>
+        <button
+          class="modal-button primary"
+          loading="{{nicknameEditorStatus === 'saving'}}"
+          disabled="{{nicknameEditorStatus === 'saving'}}"
+          bindtap="onSaveNickname"
+        >保存</button>
+      </view>
+    </view>
+  </view>
 </view>

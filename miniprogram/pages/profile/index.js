@@ -4,15 +4,27 @@ const {
   normalizeBudgetAmountUpdate,
   saveBudgetAmount,
 } = require("../../services/budgetService");
+const {
+  createDefaultUserProfile,
+  loadUserProfile,
+  normalizeNickname,
+  saveUserProfile,
+} = require("../../services/userProfileService");
 
 Page({
   data: {
     status: "loading",
     summary: createEmptyDashboardState().summary,
+    userProfile: createDefaultUserProfile(),
     errorMessage: "",
     budgetAmountInput: "",
     budgetEditorError: "",
     budgetEditorStatus: "idle",
+    avatarEditorStatus: "idle",
+    showNicknameEditor: false,
+    nicknameEditorInput: "",
+    nicknameEditorError: "",
+    nicknameEditorStatus: "idle",
   },
 
   onShow() {
@@ -31,20 +43,137 @@ Page({
       errorMessage: "",
     });
 
-    return loadDashboard()
-      .then((dashboard) => {
+    return Promise.all([loadDashboard(), loadUserProfile()])
+      .then(([dashboard, userProfile]) => {
         this.setData({
           status: "success",
           summary: dashboard.summary,
+          userProfile,
           budgetAmountInput: dashboard.summary.has_budget ? dashboard.summary.total_amount_yuan : "",
           budgetEditorError: "",
           budgetEditorStatus: "idle",
+          avatarEditorStatus: "idle",
+          showNicknameEditor: false,
+          nicknameEditorInput: userProfile.nickname,
+          nicknameEditorError: "",
+          nicknameEditorStatus: "idle",
         });
       })
       .catch((error) => {
         this.setData({
           status: "error",
           errorMessage: error.message || "我的页面加载失败",
+        });
+      });
+  },
+
+  onChooseAvatar(event) {
+    const avatarUrl = event.detail && event.detail.avatarUrl;
+
+    if (!avatarUrl) {
+      return;
+    }
+
+    const previousProfile = this.data.userProfile;
+
+    this.setData({
+      avatarEditorStatus: "saving",
+      userProfile: {
+        ...previousProfile,
+        avatar_url: avatarUrl,
+      },
+    });
+
+    saveUserProfile({
+      nickname: previousProfile.nickname,
+      avatar_url: avatarUrl,
+    })
+      .then((userProfile) => {
+        this.setData({
+          userProfile,
+          avatarEditorStatus: "idle",
+        });
+
+        wx.showToast({
+          title: "头像已更新",
+          icon: "success",
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          userProfile: previousProfile,
+          avatarEditorStatus: "error",
+        });
+
+        wx.showToast({
+          title: error.message || "头像保存失败",
+          icon: "none",
+        });
+      });
+  },
+
+  onOpenNicknameEditor() {
+    this.setData({
+      showNicknameEditor: true,
+      nicknameEditorInput: this.data.userProfile.nickname,
+      nicknameEditorError: "",
+      nicknameEditorStatus: "idle",
+    });
+  },
+
+  onCancelNicknameEdit() {
+    this.setData({
+      showNicknameEditor: false,
+      nicknameEditorError: "",
+      nicknameEditorStatus: "idle",
+    });
+  },
+
+  onNicknameInput(event) {
+    this.setData({
+      nicknameEditorInput: event.detail.value,
+      nicknameEditorError: "",
+    });
+  },
+
+  onSaveNickname() {
+    this.setData({
+      nicknameEditorStatus: "saving",
+      nicknameEditorError: "",
+    });
+
+    try {
+      normalizeNickname(this.data.nicknameEditorInput);
+    } catch (error) {
+      this.setData({
+        nicknameEditorStatus: "error",
+        nicknameEditorError: error.message || "请输入有效昵称",
+      });
+      return;
+    }
+
+    saveUserProfile({
+      nickname: this.data.nicknameEditorInput,
+      avatar_url: this.data.userProfile.avatar_url,
+    })
+      .then((userProfile) => {
+        this.setData({
+          userProfile,
+          showNicknameEditor: false,
+          nicknameEditorInput: userProfile.nickname,
+          nicknameEditorStatus: "idle",
+          nicknameEditorError: "",
+        });
+
+        wx.showToast({
+          title: "昵称已更新",
+          icon: "success",
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          nicknameEditorStatus: "error",
+          nicknameEditorError: error.message || "昵称保存失败",
         });
       });
   },
