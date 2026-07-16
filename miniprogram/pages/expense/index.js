@@ -4,6 +4,21 @@ const {
   selectExpenseType,
 } = require("../../services/expenseFormService");
 
+function returnToHome() {
+  const pages = getCurrentPages();
+
+  if (pages.length > 1) {
+    wx.navigateBack({
+      delta: 1,
+    });
+    return;
+  }
+
+  wx.redirectTo({
+    url: "/pages/index/index",
+  });
+}
+
 Page({
   data: createExpenseFormState(),
 
@@ -50,12 +65,14 @@ Page({
       .then(() => {
         this.setData({
           status: "success",
-          successMessage: "消费记录已准备好，后续将接入预算扣减",
+          successMessage: "消费记录已保存",
         });
         wx.showToast({
-          title: "已记录",
+          title: "已保存",
           icon: "success",
+          duration: 600,
         });
+        setTimeout(returnToHome, 650);
       })
       .catch((error) => {
         this.setData({
