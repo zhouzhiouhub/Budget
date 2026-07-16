@@ -45,7 +45,7 @@
     "disableSWC": true
   },
   "appid": "wxb61b5c9633fc86da",
-  "projectname": "quickstart-wx-cloud",
+  "projectname": "budget-management-miniapp",
   "libVersion": "2.20.1",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {

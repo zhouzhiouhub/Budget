@@ -1,0 +1,65 @@
+<view class="page-shell">
+  <view class="page-header">
+    <view class="eyebrow">新增流水</view>
+    <view class="page-title">选择消费类型</view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">消费类型</view>
+    <view class="type-grid">
+      <button
+        class="type-card {{selectedTypeId === item.id ? 'active' : ''}}"
+        wx:for="{{expenseTypes}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onSelectType"
+      >
+        <view class="type-name">{{item.name}}</view>
+        <view class="type-desc">{{item.description}}</view>
+      </button>
+    </view>
+  </view>
+
+  <view class="form-section" wx:if="{{selectedTypeId}}">
+    <view class="section-title">消费金额</view>
+    <view class="amount-field">
+      <text class="currency">¥</text>
+      <input
+        class="amount-input"
+        type="digit"
+        value="{{amount_yuan}}"
+        placeholder="0.00"
+        bindinput="onAmountInput"
+      />
+    </view>
+  </view>
+
+  <view class="form-section" wx:if="{{canWriteRemark}}">
+    <view class="section-title">备注</view>
+    <textarea
+      class="remark-input"
+      value="{{remark}}"
+      maxlength="80"
+      auto-height="{{false}}"
+      placeholder="写点备注，例如：和客户午餐、打车去公司"
+      bindinput="onRemarkInput"
+    />
+    <view class="remark-counter">{{remark.length}} / 80</view>
+  </view>
+
+  <view class="hint-card" wx:if="{{!selectedTypeId}}">
+    先选择消费类型，随后可填写金额和备注。
+  </view>
+
+  <view class="feedback error" wx:if="{{errorMessage}}">{{errorMessage}}</view>
+  <view class="feedback success" wx:if="{{successMessage}}">{{successMessage}}</view>
+
+  <button
+    class="submit-button"
+    loading="{{status === 'submitting'}}"
+    disabled="{{status === 'submitting'}}"
+    bindtap="onSubmit"
+  >
+    保存消费
+  </button>
+</view>

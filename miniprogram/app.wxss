@@ -1,27 +1,22 @@
-/**app.wxss**/
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+page {
+  min-height: 100%;
+  background: #f5f7f3;
+  color: #1f2933;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+view,
+text,
+button,
+input {
   box-sizing: border-box;
-} 
+}
 
 button {
   background: initial;
+  line-height: 1.2;
 }
 
-button:focus{
-  outline: 0;
-}
-
-button::after{
+button::after {
   border: none;
-}
-
-
-page {
-  background: #f6f6f6;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
 }

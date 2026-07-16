@@ -1,12 +1,28 @@
-# 云开发 quickstart
+# 预算管理小程序
 
-这是云开发的快速启动指引，其中演示了如何上手使用云开发的三大基础能力：
+这是一个基于微信小程序云开发结构初始化的预算管理项目。当前保留原生小程序与云函数目录，先建立预算首页、金额工具和预算服务边界，后续可继续接入云数据库和云函数。
 
-- 数据库：一个既可在小程序前端操作，也能在云函数中读写的 JSON 文档型数据库
-- 文件存储：在小程序前端直接上传/下载云端文件，在云开发控制台可视化管理
-- 云函数：在云端运行的代码，微信私有协议天然鉴权，开发者只需编写业务逻辑代码
+## 开发计划
 
-## 参考文档
+- [BudgetFlow 智能预算管理平台开发计划书](docs/DEVELOPMENT_PLAN.md)
 
-- [云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+## 当前结构
 
+- `miniprogram/pages/index/`：预算首页仪表盘。
+- `miniprogram/services/`：预算应用服务与页面数据编排。
+- `miniprogram/utils/`：金额校验、规范化和精确计算工具。
+- `miniprogram/types/`：预算领域 JSDoc 类型。
+- `cloudfunctions/quickstartFunctions/`：微信云开发 quickstart 云函数，暂未迁移。
+
+## 金额规则
+
+- 金额单位统一为元。
+- 金额字段使用 `_yuan` 后缀。
+- 金额进入业务逻辑前会规范化为两位小数字符串，例如 `100.00`。
+- 当前实现使用整数“分”作为内部计算表示，避免直接使用 JavaScript 浮点数计算金额。
+
+## 后续建议
+
+1. 按开发计划搭建 monorepo 目标结构。
+2. 将预算创建、支出记录和预算扣减接入 Cloudflare Worker + Hono。
+3. 为预算扣减和超预算确认补充可审计的 `BudgetMutation` 记录。

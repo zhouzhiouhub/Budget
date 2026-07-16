@@ -1,29 +1,102 @@
-<!--index.wxml-->
-<view class="container">
-  <view class="title">快速了解云开发</view>
-  <view class="top_tip">免鉴权接口调用 免部署后台 高并发</view>
-  <view class="power" wx:key="title" wx:for="{{powerList}}" wx:for-item="power">
-    <view class="power_info" data-index="{{index}}" data-type="{{ power.type }}" bindtap="onClickPowerInfo">
-      <view class="power_info_text">
-        <view class="power_info_text_title">
-          {{power.title}}
-          <view class="power_info_text_tag" wx:if="{{power.tag}}">{{power.tag}}</view>
-        </view>
-        <view class="power_info_text_tip">{{power.tip}}</view>
-      </view>
-      <image wx:if="{{!power.showItem && power.item.length}}" class="power_info_more" src="../../images/arrow.svg"></image>
-      <image wx:if="{{power.showItem && power.item.length}}" class="power_info_less" src="../../images/arrow.svg"></image>
-      <image wx:if="{{!power.item.length}}" class="power_item_icon" src="../../images/arrow.svg"></image>
+<view class="page-shell">
+  <view class="app-header">
+    <view>
+      <view class="eyebrow">{{summary.period_label}}</view>
+      <view class="page-title">预算管理</view>
     </view>
-    <view wx:if="{{power.showItem}}">
-      <view wx:key="title" wx:for="{{power.item}}">
-        <view class="line"></view>
-        <view class="power_item" bindtap="jumpPage" data-type="{{ item.type }}" data-page="{{item.page}}">
-          <view class="power_item_title">{{item.title}}</view>
-          <image class="power_item_icon" src="../../images/arrow.svg"></image>
-        </view>
-      </view>
-    </view>
+    <view class="scope-pill">{{summary.scope_label}}</view>
   </view>
-  <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+
+  <block wx:if="{{status === 'loading'}}">
+    <view class="state-panel">
+      <view class="state-title">加载中</view>
+      <view class="state-text">正在整理本月预算</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{status === 'error'}}">
+    <view class="state-panel error">
+      <view class="state-title">加载失败</view>
+      <view class="state-text">{{errorMessage}}</view>
+      <button class="primary-button" bindtap="refreshDashboard">重试</button>
+    </view>
+  </block>
+
+  <block wx:elif="{{status === 'empty'}}">
+    <view class="state-panel">
+      <view class="state-title">暂无预算</view>
+      <view class="state-text">本月还没有可用的预算分类</view>
+      <button class="primary-button" bindtap="onCreateBudget">新建预算</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="summary-card {{summary.statusClass}}">
+      <view class="summary-head">
+        <view>
+          <view class="summary-label">{{summary.remainingTitle}}</view>
+          <view class="summary-amount">{{summary.remainingDisplay}}</view>
+        </view>
+        <view class="status-badge">{{summary.statusText}}</view>
+      </view>
+      <view class="summary-meta">
+        已用 {{summary.used_amount_yuan}} / {{summary.total_amount_yuan}} 元
+      </view>
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{summary.progressPercent}}%;"></view>
+      </view>
+      <view class="summary-footer">
+        <text>{{summary.usedRateText}}</text>
+        <text>{{summary.period_label}}</text>
+      </view>
+    </view>
+
+    <view class="quick-actions">
+      <button class="primary-button" bindtap="onAddExpense">记一笔支出</button>
+      <button class="secondary-button" bindtap="onCreateBudget">调整预算</button>
+    </view>
+
+    <view class="section-row">
+      <view class="section-title">分类预算</view>
+      <view class="section-count">{{categories.length}} 项</view>
+    </view>
+
+    <view class="category-list">
+      <view class="category-card {{item.statusClass}}" wx:for="{{categories}}" wx:key="id">
+        <view class="category-head">
+          <view class="category-name">
+            <view class="color-dot" style="background: {{item.color}};"></view>
+            <text>{{item.name}}</text>
+          </view>
+          <view class="category-status">{{item.statusText}}</view>
+        </view>
+        <view class="category-amount">
+          <text>{{item.used_amount_yuan}}</text>
+          <text class="muted"> / {{item.amount_yuan}} 元</text>
+        </view>
+        <view class="progress-track slim">
+          <view class="progress-fill" style="width: {{item.progressPercent}}%;"></view>
+        </view>
+        <view class="category-foot">
+          <text>{{item.usedRateText}}</text>
+          <text>{{item.remainingDisplay}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-row transaction-title">
+      <view class="section-title">近期流水</view>
+      <view class="section-count">{{transactions.length}} 笔</view>
+    </view>
+
+    <view class="transaction-list">
+      <view class="transaction-item" wx:for="{{transactions}}" wx:key="id">
+        <view>
+          <view class="transaction-name">{{item.title}}</view>
+          <view class="transaction-meta">{{item.category_name}} · {{item.occurred_at}}</view>
+        </view>
+        <view class="transaction-amount">{{item.amountLabel}}</view>
+      </view>
+    </view>
+  </block>
 </view>

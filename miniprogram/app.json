@@ -1,13 +1,14 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/expense/index",
     "pages/example/index"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "backgroundColor": "#F5F7F3",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F5F7F3",
+    "navigationBarTitleText": "预算管理",
     "navigationBarTextStyle": "black"
   },
   "sitemapLocation": "sitemap.json",
