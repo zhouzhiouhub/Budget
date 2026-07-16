@@ -18,14 +18,20 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 92rpx;
   width: 92rpx;
+  min-width: 92rpx;
+  max-width: 92rpx;
   height: 92rpx;
+  min-height: 92rpx;
+  max-height: 92rpx;
+  box-sizing: border-box;
   border: 0;
-  border-radius: 50%;
+  border-radius: 999rpx;
   padding: 0;
   margin: 0;
   background: transparent;
+  line-height: 1;
   overflow: hidden;
 }
 
@@ -38,9 +44,10 @@ page {
 }
 
 .avatar-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  display: block;
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 999rpx;
   background: #e7eee9;
 }
 
@@ -48,10 +55,15 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 92rpx;
   width: 92rpx;
+  min-width: 92rpx;
+  max-width: 92rpx;
   height: 92rpx;
-  border-radius: 50%;
+  min-height: 92rpx;
+  max-height: 92rpx;
+  box-sizing: border-box;
+  border-radius: 999rpx;
   background: #13795b;
   color: #ffffff;
   font-size: 34rpx;
@@ -75,12 +87,18 @@ page {
 .title-row {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  justify-content: flex-start;
+  gap: 10rpx;
+  width: 260rpx;
+  max-width: 100%;
   margin-top: 4rpx;
 }
 
 .page-title {
+  flex: 0 0 190rpx;
+  width: 190rpx;
   min-width: 0;
+  max-width: 190rpx;
   color: #17221b;
   font-size: 44rpx;
   font-weight: 700;
@@ -94,12 +112,12 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 48rpx;
   width: 48rpx;
   height: 48rpx;
   min-width: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: 999rpx;
   padding: 0;
   margin: 0;
   background: #e7eee9;
