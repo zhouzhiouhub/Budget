@@ -7,20 +7,18 @@
   <view class="readonly-hint" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
 
   <view class="form-section">
-    <view class="section-title">消费类型</view>
-    <view class="type-grid">
-      <button
-        class="type-card {{selectedTypeId === item.id ? 'active' : ''}}"
-        wx:for="{{expenseTypes}}"
-        wx:key="id"
-        data-id="{{item.id}}"
-        bindtap="onSelectType"
-        disabled="{{periodEditPolicy.is_readonly}}"
-      >
-        <view class="type-name">{{item.name}}</view>
-        <view class="type-desc">{{item.description}}</view>
-      </button>
-    </view>
+      <view class="type-cell" wx:for="{{expenseTypes}}" wx:key="id">
+        <button
+          class="type-card {{selectedTypeId === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSelectType"
+          hover-class="type-card-pressed"
+          disabled="{{periodEditPolicy.is_readonly}}"
+        >
+          <view class="type-name">{{item.name}}</view>
+          <view class="type-desc">{{item.description}}</view>
+        </button>
+      </view>
   </view>
 
   <view class="form-section" wx:if="{{selectedTypeId}}">
