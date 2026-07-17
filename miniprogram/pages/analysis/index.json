@@ -1,5 +1,4 @@
 {
-  "navigationStyle": "custom",
   "navigationBarTitleText": "预算分析",
   "enablePullDownRefresh": true,
   "usingComponents": {

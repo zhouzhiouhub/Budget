@@ -4,7 +4,7 @@ page {
 
 .page-shell {
   min-height: 100vh;
-  padding: 176rpx 32rpx 180rpx;
+  padding: 40rpx 32rpx 180rpx;
   padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
 
