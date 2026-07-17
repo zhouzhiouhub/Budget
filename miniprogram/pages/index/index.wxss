@@ -329,11 +329,17 @@ page {
 }
 
 .side-menu-title {
+  display: block;
+  width: 96rpx;
   margin-top: 4rpx;
   color: #17221b;
   font-size: 38rpx;
   font-weight: 700;
   line-height: 48rpx;
+  letter-spacing: 0;
+  white-space: nowrap;
+  word-break: keep-all;
+  writing-mode: horizontal-tb;
 }
 
 .side-menu-close {
