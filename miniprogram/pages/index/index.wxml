@@ -5,7 +5,6 @@
       <view class="page-title">预算管理</view>
       <view class="eyebrow">{{summary.period_label}}</view>
     </view>
-    <view class="scope-pill">{{summary.scope_label}}</view>
   </view>
 
   <block wx:if="{{status === 'loading'}}">

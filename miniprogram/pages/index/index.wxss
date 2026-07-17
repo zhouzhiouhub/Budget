@@ -34,18 +34,11 @@ page {
   line-height: 56rpx;
 }
 
-.scope-pill,
 .status-badge {
   border-radius: 999rpx;
   padding: 8rpx 18rpx;
   font-size: 24rpx;
   line-height: 32rpx;
-}
-
-.scope-pill {
-  flex-shrink: 0;
-  background: #e7eee9;
-  color: #24624d;
 }
 
 .state-panel,
