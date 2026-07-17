@@ -111,9 +111,31 @@ Page({
       return;
     }
 
+    wx.showActionSheet({
+      itemList: ["重新编辑", "移除订单"],
+      success: (result) => {
+        if (result.tapIndex === 0) {
+          this.editTransaction(recordId);
+          return;
+        }
+
+        if (result.tapIndex === 1) {
+          this.confirmRemoveTransaction(recordId, record);
+        }
+      },
+    });
+  },
+
+  editTransaction(recordId) {
+    wx.navigateTo({
+      url: "/pages/expense/index?mode=edit&recordId=" + encodeURIComponent(recordId) + "&period=" + encodeURIComponent(this.data.viewPeriod),
+    });
+  },
+
+  confirmRemoveTransaction(recordId, record) {
     wx.showModal({
       title: "移除订单",
-      content: `移除后该笔花费不再记录，${record.amount_yuan} 元会返回预算。`,
+      content: "移除后该笔花费不再记录，" + record.amount_yuan + " 元会返回预算。",
       confirmText: "移除",
       confirmColor: "#be123c",
       success: (result) => {

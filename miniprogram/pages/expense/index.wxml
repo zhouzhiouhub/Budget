@@ -1,7 +1,7 @@
 <view class="page-shell">
   <view class="page-header">
     <view class="eyebrow">{{periodLabel}}</view>
-    <view class="page-title">选择消费类型</view>
+    <view class="page-title">{{pageTitle}}</view>
   </view>
 
   <view class="readonly-hint" wx:if="{{periodEditPolicy.is_readonly}}">{{periodEditPolicy.readonly_text}}</view>
@@ -62,9 +62,9 @@
   <button
     class="submit-button"
     loading="{{status === 'submitting'}}"
-    disabled="{{status === 'submitting' || periodEditPolicy.is_readonly}}"
+    disabled="{{status === 'submitting' || status === 'loading' || periodEditPolicy.is_readonly}}"
     bindtap="onSubmit"
   >
-    保存消费
+    {{submitButtonText}}
   </button>
 </view>

@@ -372,6 +372,19 @@ function getExpenseRecords(period = getCurrentPeriod(), expenseTypeId = "all") {
   return Promise.resolve(records);
 }
 
+function getExpenseRecord(recordId, period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  const state = readBudgetState();
+  const record = getPeriodTransactions(state, normalizedPeriod)
+    .find((item) => item.id === recordId && item.type === "expense");
+
+  if (!record) {
+    return Promise.reject(new Error("未找到要编辑的消费记录"));
+  }
+
+  return Promise.resolve(normalizeTransaction(record));
+}
+
 function formatPercentText(amountCents, totalCents) {
   if (totalCents <= 0) {
     return "0%";
@@ -729,10 +742,97 @@ function removeExpenseRecord(recordId, period = getCurrentPeriod()) {
     dashboard: buildDashboardState(getBudgetSnapshot(nextState, normalizedPeriod)),
   });
 }
+
+function updateExpenseRecord(recordId, expenseDraft, period = getCurrentPeriod()) {
+  const normalizedPeriod = normalizePeriod(period);
+  assertPeriodEditable(normalizedPeriod);
+
+  const state = readBudgetState();
+  const recordIndex = state.transactions.findIndex((item) => (
+    item.id === recordId
+    && item.period === normalizedPeriod
+    && item.type === "expense"
+  ));
+
+  if (recordIndex < 0) {
+    throw new Error("未找到要编辑的消费记录");
+  }
+
+  const budget = state.budgets[normalizedPeriod];
+  if (!budget || !budget.total_amount_yuan) {
+    throw new Error("请到我的页面设置本月总预算");
+  }
+
+  const record = state.transactions[recordIndex];
+  const beforeAmountYuan = normalizeAmountYuan(record.amount_yuan);
+  const nextAmountYuan = normalizeAmountYuan(expenseDraft.amount_yuan);
+  const nextExpenseTypeId = String(expenseDraft.expense_type_id || "").trim();
+  const nextExpenseTypeName = String(expenseDraft.expense_type_name || "").trim();
+  const nextRemark = String(expenseDraft.remark || "").trim();
+
+  if (!nextExpenseTypeId || !nextExpenseTypeName) {
+    throw new Error("请选择有效的消费类型");
+  }
+
+  if (nextRemark.length > 80) {
+    throw new Error("备注最多填写 80 个字");
+  }
+
+  const dashboardBefore = buildDashboardState(getBudgetSnapshot(state, normalizedPeriod));
+  const usedWithoutRecordAmountYuan = subtractAmountYuan(dashboardBefore.summary.used_amount_yuan, beforeAmountYuan);
+  const afterUsedAmountYuan = addAmountYuan(usedWithoutRecordAmountYuan, nextAmountYuan);
+  const totalAmountYuan = normalizeAmountYuan(budget.total_amount_yuan);
+  const overBudgetAmountYuan = compareAmountYuan(afterUsedAmountYuan, totalAmountYuan) > 0
+    ? subtractAmountYuan(afterUsedAmountYuan, totalAmountYuan)
+    : "0.00";
+
+  if (compareAmountYuan(overBudgetAmountYuan, "0.00") > 0) {
+    throw new Error("调整后将超出预算 " + overBudgetAmountYuan + " 元，请到我的页面调整总预算");
+  }
+
+  const now = new Date().toISOString();
+  const updatedRecord = {
+    ...record,
+    title: nextRemark || nextExpenseTypeName || "消费",
+    expense_type_id: nextExpenseTypeId,
+    expense_type_name: nextExpenseTypeName,
+    amount_yuan: nextAmountYuan,
+    remark: nextRemark,
+    updated_at: now,
+  };
+
+  state.transactions[recordIndex] = updatedRecord;
+  state.mutations.push({
+    id: createId("mutation"),
+    budget_period_id: budget.id,
+    expense_record_id: updatedRecord.id,
+    mutation_type: "expense_updated",
+    before_amount_yuan: beforeAmountYuan,
+    after_amount_yuan: nextAmountYuan,
+    before_expense_type_id: record.expense_type_id || "",
+    after_expense_type_id: nextExpenseTypeId,
+    before_remark: record.remark || "",
+    after_remark: nextRemark,
+    before_used_amount_yuan: dashboardBefore.summary.used_amount_yuan,
+    after_used_amount_yuan: afterUsedAmountYuan,
+    over_budget_amount_yuan: "0.00",
+    created_at: now,
+  });
+
+  const nextState = writeBudgetState(state);
+
+  return Promise.resolve({
+    success: true,
+    data: normalizeTransaction(updatedRecord),
+    dashboard: buildDashboardState(getBudgetSnapshot(nextState, normalizedPeriod)),
+  });
+}
+
 module.exports = {
   buildDashboardState,
   createEmptyDashboardState,
   getCurrentPeriod,
+  getExpenseRecord,
   getExpenseRecords,
   getLastDateOfPeriod,
   getPeriodEditPolicy,
@@ -745,6 +845,7 @@ module.exports = {
   readBudgetState,
   removeExpenseRecord,
   saveBudgetAmount,
+  updateExpenseRecord,
   saveExpenseRecord,
   saveSelectedViewPeriod,
 };

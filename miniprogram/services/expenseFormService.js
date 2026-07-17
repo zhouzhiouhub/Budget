@@ -109,11 +109,19 @@ function createExpenseRecordDraft(formData, expenseTypes = EXPENSE_TYPES, period
   });
 }
 
+function createExpenseRecordUpdateDraft(formData, expenseTypes = EXPENSE_TYPES) {
+  return Promise.resolve({
+    success: true,
+    data: buildExpenseDraft(formData, expenseTypes),
+  });
+}
+
 module.exports = {
   EXPENSE_TYPES,
   buildExpenseDraft,
   createExpenseFormState,
   createExpenseRecordDraft,
+  createExpenseRecordUpdateDraft,
   normalizeRemark,
   selectExpenseType,
 };
