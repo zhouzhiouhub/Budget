@@ -1,4 +1,5 @@
 .side-menu-mask {
+  box-sizing: border-box;
   position: fixed;
   left: 0;
   right: 0;
@@ -9,6 +10,7 @@
 }
 
 .side-menu-panel {
+  box-sizing: border-box;
   position: fixed;
   left: 0;
   top: 0;
@@ -24,6 +26,8 @@
 }
 
 .side-menu-header {
+  box-sizing: border-box;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,6 +35,7 @@
 }
 
 .side-menu-title {
+  box-sizing: border-box;
   display: block;
   width: 96rpx;
   margin-top: 4rpx;
@@ -45,6 +50,9 @@
 }
 
 .side-menu-close {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +67,8 @@
   background: transparent;
   color: #24624d;
   font-size: 28rpx;
-  line-height: 1;
+  line-height: 44rpx;
+  overflow: visible;
 }
 
 .side-menu-close::after,
@@ -68,14 +77,17 @@
 }
 
 .side-menu-list {
+  box-sizing: border-box;
   margin-top: 28rpx;
 }
 
 .side-menu-item {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  max-width: 100%;
   min-width: 0;
   height: 64rpx;
   border-radius: 10rpx;

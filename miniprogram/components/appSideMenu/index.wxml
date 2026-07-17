@@ -2,7 +2,7 @@
 <view class="side-menu-panel" wx:if="{{visible}}">
   <view class="side-menu-header">
     <view class="side-menu-title">菜单</view>
-    <button class="side-menu-close" aria-label="关闭菜单" bindtap="onClose">×</button>
+    <view class="side-menu-close" aria-label="关闭菜单" bindtap="onClose">×</view>
   </view>
   <view class="side-menu-list">
     <button class="side-menu-item {{active === 'home' ? 'active' : ''}}" data-target="home" bindtap="onNavigate">首页</button>
