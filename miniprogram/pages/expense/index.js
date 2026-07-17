@@ -19,7 +19,7 @@ function createPageState() {
     mode: "create",
     isEditMode: false,
     recordId: "",
-    pageTitle: "选择消费类型",
+    pageTitle: "消费类型",
     submitButtonText: "保存消费",
     period: "",
     periodLabel: "新增流水",
