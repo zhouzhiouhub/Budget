@@ -1,3 +1,4 @@
+const { hideNativeHomeButton } = require("../../utils/navigation");
 const {
   createExpenseFormState,
   createExpenseRecordDraft,
@@ -86,6 +87,7 @@ Page({
   },
 
   onShow() {
+    hideNativeHomeButton();
     this.refreshViewPeriod();
   },
 

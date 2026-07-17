@@ -20,6 +20,7 @@ button {
 button::after {
   border: none;
 }
+
 .page-header.app-header {
   display: flex;
   flex-direction: row;
@@ -35,32 +36,4 @@ button::after {
   flex: 1;
   min-width: 0;
   text-align: right;
-}
-
-.menu-button {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36rpx;
-  height: 40rpx;
-  gap: 7rpx;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.menu-button::after {
-  border: 0;
-}
-
-.menu-button-line {
-  width: 30rpx;
-  height: 4rpx;
-  border-radius: 999rpx;
-  background: #24624d;
 }

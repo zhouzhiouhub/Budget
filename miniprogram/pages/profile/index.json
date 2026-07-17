@@ -1,7 +1,9 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "我的",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "app-side-menu": "/components/appSideMenu/index"
+    "app-side-menu": "/components/appSideMenu/index",
+    "app-menu-button": "/components/appMenuButton/index"
   }
 }

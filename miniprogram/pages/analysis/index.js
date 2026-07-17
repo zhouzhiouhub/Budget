@@ -1,3 +1,4 @@
+const { hideNativeHomeButton } = require("../../utils/navigation");
 const {
   getCurrentPeriod,
   loadAnalytics,
@@ -16,6 +17,7 @@ Page({
   },
 
   onShow() {
+    hideNativeHomeButton();
     this.refreshAnalytics();
   },
   onOpenSideMenu() {

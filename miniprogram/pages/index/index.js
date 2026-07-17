@@ -1,3 +1,4 @@
+const { hideNativeHomeButton } = require("../../utils/navigation");
 const {
   createEmptyDashboardState,
   loadDashboard,
@@ -20,6 +21,7 @@ Page({
   },
 
   onShow() {
+    hideNativeHomeButton();
     this.refreshDashboard();
   },
 
@@ -63,15 +65,6 @@ Page({
   onCloseSideMenu() {
     this.setData({
       showSideMenu: false,
-    });
-  },
-
-  onViewRecords() {
-    this.setData({
-      showSideMenu: false,
-    });
-    wx.redirectTo({
-      url: "/pages/records/index",
     });
   },
 
@@ -172,31 +165,5 @@ Page({
           deletingRecordId: "",
         });
       });
-  },
-
-  onViewAnalytics() {
-    this.setData({
-      showSideMenu: false,
-    });
-    wx.redirectTo({
-      url: "/pages/analysis/index",
-    });
-  },
-
-  onViewProfile() {
-    this.setData({
-      showSideMenu: false,
-    });
-    wx.redirectTo({
-      url: "/pages/profile/index",
-    });
-  },
-
-  onTodoMenuItem(event) {
-    const title = event.currentTarget.dataset.title || "该功能";
-    wx.showToast({
-      title: `${title}开发中`,
-      icon: "none",
-    });
-  },
+  }
 });

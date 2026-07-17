@@ -1,15 +1,11 @@
 <view class="page-shell">
   <view class="page-header app-header">
-    <button class="menu-button" aria-label="打开菜单" bindtap="onOpenSideMenu">
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    </button>
+    <app-menu-button bind:open="onOpenSideMenu"></app-menu-button>
     <view class="header-title-group">
-    <view class="eyebrow">{{periodLabel}}</view>
-    <view class="page-title">消费</view>
+      <view class="eyebrow">{{periodLabel}}</view>
+      <view class="page-title">消费</view>
+    </view>
   </view>
-</view>
 
   <view class="readonly-note" wx:if="{{periodEditPolicy.is_readonly && !periodEditPolicy.is_future_period}}">{{periodEditPolicy.readonly_text}}</view>
 

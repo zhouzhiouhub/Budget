@@ -4,7 +4,7 @@ page {
 
 .page-shell {
   min-height: 100vh;
-  padding: 40rpx 32rpx 56rpx;
+  padding: 176rpx 32rpx 56rpx;
 }
 
 .app-header {
@@ -18,36 +18,6 @@ page {
 .header-title-group {
   flex: 1;
   min-width: 0;
-}
-
-.menu-button {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36rpx;
-  height: 40rpx;
-  gap: 7rpx;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.menu-button::after,
-.side-menu-close::after,
-.side-menu-item::after {
-  border: 0;
-}
-
-.menu-button-line {
-  width: 30rpx;
-  height: 4rpx;
-  border-radius: 999rpx;
-  background: #24624d;
 }
 
 .eyebrow {
@@ -288,108 +258,4 @@ page {
   color: #be123c;
   font-size: 28rpx;
   font-weight: 700;
-}
-
-.side-menu-mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 30;
-  background: rgba(23, 34, 27, 0.38);
-}
-
-.side-menu-panel {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 31;
-  width: 280rpx;
-  max-width: 41vw;
-  border-radius: 0 22rpx 22rpx 0;
-  background: #ffffff;
-  padding: 48rpx 20rpx;
-  box-shadow: 18rpx 0 44rpx rgba(23, 34, 27, 0.16);
-  overflow: hidden;
-}
-
-.side-menu-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10rpx;
-}
-
-.side-menu-label {
-  color: #617064;
-  font-size: 24rpx;
-  line-height: 32rpx;
-}
-
-.side-menu-title {
-  display: block;
-  width: 96rpx;
-  margin-top: 4rpx;
-  color: #17221b;
-  font-size: 38rpx;
-  font-weight: 700;
-  line-height: 48rpx;
-  letter-spacing: 0;
-  white-space: nowrap;
-  word-break: keep-all;
-  writing-mode: horizontal-tb;
-}
-
-.side-menu-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 44rpx;
-  height: 44rpx;
-  min-width: 0;
-  border: 0;
-  border-radius: 50%;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  color: #24624d;
-  font-size: 28rpx;
-  line-height: 1;
-}
-
-.side-menu-list {
-  margin-top: 28rpx;
-}
-
-.side-menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  min-width: 0;
-  height: 64rpx;
-  border-radius: 10rpx;
-  border: 0;
-  padding: 0 14rpx;
-  margin: 0 0 14rpx;
-  background: #f5f7f3;
-  color: #24624d;
-  font-size: 24rpx;
-  font-weight: 600;
-  line-height: 1;
-  text-align: left;
-  overflow: hidden;
-}
-
-.side-menu-item.active {
-  background: #13795b;
-  color: #ffffff;
-}
-
-.side-menu-item.pending {
-  background: #f7faf6;
-  color: #6f7a72;
 }

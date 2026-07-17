@@ -1,3 +1,4 @@
+const { hideNativeHomeButton } = require("../../utils/navigation");
 const {
   createEmptyDashboardState,
   getCurrentPeriod,
@@ -33,6 +34,7 @@ Page({
   },
 
   onShow() {
+    hideNativeHomeButton();
     this.refreshProfile();
   },
   onOpenSideMenu() {

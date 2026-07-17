@@ -1,10 +1,6 @@
 <view class="page-shell">
   <view class="profile-header">
-    <button class="menu-button" aria-label="打开菜单" bindtap="onOpenSideMenu">
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    </button>
+    <app-menu-button bind:open="onOpenSideMenu"></app-menu-button>
     <button
       class="avatar-picker header-avatar"
       open-type="chooseAvatar"
@@ -15,7 +11,7 @@
     >
       <image wx:if="{{userProfile.avatar_url}}" class="avatar-image" src="{{userProfile.avatar_url}}" mode="aspectFill"></image>
       <view wx:else class="avatar-mark">{{userProfile.avatar_text}}</view>
-      </button>
+    </button>
     <view class="profile-copy">
       <view class="title-row">
         <view class="page-title">{{userProfile.nickname}}</view>

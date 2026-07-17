@@ -1,6 +1,8 @@
 {
   "navigationBarTitleText": "消费",
+  "navigationStyle": "custom",
   "usingComponents": {
-    "app-side-menu": "/components/appSideMenu/index"
+    "app-side-menu": "/components/appSideMenu/index",
+    "app-menu-button": "/components/appMenuButton/index"
   }
 }

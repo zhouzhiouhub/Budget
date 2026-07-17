@@ -1,15 +1,11 @@
 <view class="page-shell">
   <view class="page-header app-header">
-    <button class="menu-button" aria-label="打开菜单" bindtap="onOpenSideMenu">
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    <view class="menu-button-line"></view>
-    </button>
+    <app-menu-button bind:open="onOpenSideMenu"></app-menu-button>
     <view class="header-title-group">
-    <view class="eyebrow">{{periodLabel}}</view>
-    <view class="page-title">预算分析</view>
+      <view class="eyebrow">{{periodLabel}}</view>
+      <view class="page-title">预算分析</view>
+    </view>
   </view>
-</view>
 
   <view class="state-panel" wx:if="{{status === 'loading'}}">
     <view class="state-title">加载中</view>

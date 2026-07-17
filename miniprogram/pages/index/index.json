@@ -1,3 +1,8 @@
 {
-  "navigationBarTitleText": "预算管理"
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "预算管理",
+  "usingComponents": {
+    "app-side-menu": "/components/appSideMenu/index",
+    "app-menu-button": "/components/appMenuButton/index"
+  }
 }

@@ -1,0 +1,5 @@
+<button class="menu-button" aria-label="打开菜单" bindtap="onTap">
+  <view class="menu-button-line"></view>
+  <view class="menu-button-line"></view>
+  <view class="menu-button-line"></view>
+</button>

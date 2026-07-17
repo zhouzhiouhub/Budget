@@ -4,7 +4,7 @@ page {
 
 .page-shell {
   min-height: 100vh;
-  padding: 40rpx 32rpx 56rpx;
+  padding: 176rpx 32rpx 56rpx;
 }
 
 .page-header {
