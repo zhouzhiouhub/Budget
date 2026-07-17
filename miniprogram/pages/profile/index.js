@@ -29,10 +29,22 @@ Page({
     nicknameEditorInput: "",
     nicknameEditorError: "",
     nicknameEditorStatus: "idle",
+    showSideMenu: false,
   },
 
   onShow() {
     this.refreshProfile();
+  },
+  onOpenSideMenu() {
+    this.setData({
+      showSideMenu: true,
+    });
+  },
+
+  onCloseSideMenu() {
+    this.setData({
+      showSideMenu: false,
+    });
   },
 
   onPullDownRefresh() {
@@ -63,6 +75,7 @@ Page({
           nicknameEditorInput: userProfile.nickname,
           nicknameEditorError: "",
           nicknameEditorStatus: "idle",
+    showSideMenu: false,
         });
       })
       .catch((error) => {
@@ -124,6 +137,7 @@ Page({
       nicknameEditorInput: this.data.userProfile.nickname,
       nicknameEditorError: "",
       nicknameEditorStatus: "idle",
+    showSideMenu: false,
     });
   },
 
@@ -132,6 +146,7 @@ Page({
       showNicknameEditor: false,
       nicknameEditorError: "",
       nicknameEditorStatus: "idle",
+    showSideMenu: false,
     });
   },
 
@@ -168,6 +183,7 @@ Page({
           showNicknameEditor: false,
           nicknameEditorInput: userProfile.nickname,
           nicknameEditorStatus: "idle",
+    showSideMenu: false,
           nicknameEditorError: "",
         });
 

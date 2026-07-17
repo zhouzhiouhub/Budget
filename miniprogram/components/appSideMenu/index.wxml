@@ -1,0 +1,13 @@
+<view class="side-menu-mask" wx:if="{{visible}}" bindtap="onClose"></view>
+<view class="side-menu-panel" wx:if="{{visible}}">
+  <view class="side-menu-header">
+    <view class="side-menu-title">菜单</view>
+    <button class="side-menu-close" aria-label="关闭菜单" bindtap="onClose">×</button>
+  </view>
+  <view class="side-menu-list">
+    <button class="side-menu-item {{active === 'home' ? 'active' : ''}}" data-target="home" bindtap="onNavigate">首页</button>
+    <button class="side-menu-item {{active === 'records' ? 'active' : ''}}" data-target="records" bindtap="onNavigate">消费</button>
+    <button class="side-menu-item {{active === 'analysis' ? 'active' : ''}}" data-target="analysis" bindtap="onNavigate">分析</button>
+    <button class="side-menu-item {{active === 'profile' ? 'active' : ''}}" data-target="profile" bindtap="onNavigate">我的</button>
+  </view>
+</view>

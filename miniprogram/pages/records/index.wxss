@@ -9,13 +9,20 @@ page {
 }
 
 .page-header {
-  margin-bottom: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 104rpx;
+  margin-bottom: 32rpx;
+  text-align: right;
 }
 
 .eyebrow {
   color: #617064;
   font-size: 24rpx;
   line-height: 32rpx;
+  text-align: right;
 }
 
 .page-title {
@@ -24,11 +31,18 @@ page {
   font-size: 44rpx;
   font-weight: 700;
   line-height: 56rpx;
+  text-align: right;
 }
 
 .filter-panel {
   width: 100%;
-  margin-bottom: 30rpx;
+  margin-bottom: 32rpx;
+  border: 1rpx solid rgba(31, 41, 51, 0.08);
+  border-radius: 16rpx;
+  padding: 20rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 28rpx rgba(41, 54, 46, 0.07);
+  box-sizing: border-box;
 }
 
 .filter-row {
@@ -36,13 +50,13 @@ page {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
-  margin: 0 -12rpx -24rpx;
+  margin: 0 -8rpx -16rpx;
 }
 
 .filter-cell {
   flex: 0 0 33.333333%;
   max-width: 33.333333%;
-  padding: 0 12rpx 24rpx;
+  padding: 0 8rpx 16rpx;
   box-sizing: border-box;
 }
 
@@ -51,18 +65,17 @@ page {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 72rpx;
-  border: 1rpx solid #d7e4dc;
+  height: 68rpx;
+  border: 0;
   border-radius: 12rpx;
   padding: 0 8rpx;
-  background: #ffffff;
+  background: #f5f7f3;
   color: #315f4d;
   font-size: 26rpx;
   font-weight: 700;
   line-height: 1;
   text-align: center;
   box-sizing: border-box;
-  box-shadow: 0 4rpx 10rpx rgba(41, 54, 46, 0.04);
 }
 
 .filter-chip-pressed {

@@ -70,7 +70,7 @@ Page({
     this.setData({
       showSideMenu: false,
     });
-    wx.navigateTo({
+    wx.redirectTo({
       url: "/pages/records/index",
     });
   },
@@ -178,7 +178,7 @@ Page({
     this.setData({
       showSideMenu: false,
     });
-    wx.navigateTo({
+    wx.redirectTo({
       url: "/pages/analysis/index",
     });
   },
@@ -187,7 +187,7 @@ Page({
     this.setData({
       showSideMenu: false,
     });
-    wx.navigateTo({
+    wx.redirectTo({
       url: "/pages/profile/index",
     });
   },

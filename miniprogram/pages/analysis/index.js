@@ -12,10 +12,22 @@ Page({
     periodEditPolicy: {},
     analytics: null,
     errorMessage: "",
+    showSideMenu: false,
   },
 
   onShow() {
     this.refreshAnalytics();
+  },
+  onOpenSideMenu() {
+    this.setData({
+      showSideMenu: true,
+    });
+  },
+
+  onCloseSideMenu() {
+    this.setData({
+      showSideMenu: false,
+    });
   },
 
   onPullDownRefresh() {
@@ -28,6 +40,7 @@ Page({
     this.setData({
       status: "loading",
       errorMessage: "",
+    showSideMenu: false,
     });
 
     return loadSelectedViewPeriod()

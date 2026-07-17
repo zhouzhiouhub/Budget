@@ -28,10 +28,22 @@ Page({
     totalAmountDisplay: "0.00 元",
     deletingRecordId: "",
     errorMessage: "",
+    showSideMenu: false,
   },
 
   onShow() {
     this.loadRecords();
+  },
+  onOpenSideMenu() {
+    this.setData({
+      showSideMenu: true,
+    });
+  },
+
+  onCloseSideMenu() {
+    this.setData({
+      showSideMenu: false,
+    });
   },
 
   onSelectType(event) {
@@ -98,6 +110,7 @@ Page({
     this.setData({
       deletingRecordId: recordId,
       errorMessage: "",
+    showSideMenu: false,
     });
 
     return Promise.resolve()
@@ -130,6 +143,7 @@ Page({
     this.setData({
       status: "loading",
       errorMessage: "",
+    showSideMenu: false,
       records: [],
       totalAmountDisplay: "0.00 元",
     });

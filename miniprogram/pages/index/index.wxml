@@ -6,8 +6,8 @@
       <view class="menu-button-line"></view>
     </button>
     <view class="header-title-group">
-      <view class="eyebrow">{{summary.period_label}}</view>
       <view class="page-title">预算管理</view>
+      <view class="eyebrow">{{summary.period_label}}</view>
     </view>
     <view class="scope-pill">{{summary.scope_label}}</view>
   </view>

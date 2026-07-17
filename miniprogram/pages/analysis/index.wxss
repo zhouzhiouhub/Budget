@@ -8,13 +8,20 @@ page {
 }
 
 .page-header {
-  margin-bottom: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 104rpx;
+  margin-bottom: 32rpx;
+  text-align: right;
 }
 
 .eyebrow {
   color: #617064;
   font-size: 24rpx;
   line-height: 32rpx;
+  text-align: right;
 }
 
 .page-title {
@@ -23,6 +30,7 @@ page {
   font-size: 44rpx;
   font-weight: 700;
   line-height: 56rpx;
+  text-align: right;
 }
 
 .state-panel,
