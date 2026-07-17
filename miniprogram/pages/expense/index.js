@@ -165,6 +165,11 @@ Page({
   },
 
   onSelectType(event) {
+    const editPolicy = this.data.periodEditPolicy || {};
+    if (editPolicy.is_readonly) {
+      return;
+    }
+
     const { id } = event.currentTarget.dataset;
 
     try {
